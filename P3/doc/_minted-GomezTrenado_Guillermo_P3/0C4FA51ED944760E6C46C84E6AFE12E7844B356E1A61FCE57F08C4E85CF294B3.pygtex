@@ -1,0 +1,32 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8}]
+\PYG{k}{def} \PYG{n+nf}{intbetween}\PYG{p}{(}\PYG{n+nb}{min}\PYG{p}{,}\PYG{n+nb}{max}\PYG{p}{):}
+  \PYG{k}{return} \PYG{k}{lambda} \PYG{n}{x}\PYG{p}{:} \PYG{n+nb}{int}\PYG{p}{(}\PYG{n}{x}\PYG{o}{*}\PYG{p}{(}\PYG{n+nb}{max}\PYG{o}{\PYGZhy{}}\PYG{n+nb}{min}\PYG{p}{)} \PYG{o}{+} \PYG{n+nb}{min}\PYG{p}{)}
+
+\PYG{k}{def} \PYG{n+nf}{floatbetween}\PYG{p}{(}\PYG{n+nb}{min}\PYG{p}{,}\PYG{n+nb}{max}\PYG{p}{):}
+  \PYG{k}{return} \PYG{k}{lambda} \PYG{n}{x}\PYG{p}{:} \PYG{n}{x}\PYG{o}{*}\PYG{p}{(}\PYG{n+nb}{max}\PYG{o}{\PYGZhy{}}\PYG{n+nb}{min}\PYG{p}{)} \PYG{o}{+} \PYG{n+nb}{min}
+
+\PYG{c+c1}{\PYGZsh{} Dentro del train}
+\PYG{k}{def} \PYG{n+nf}{train}\PYG{p}{(}\PYG{n}{X}\PYG{p}{,}\PYG{n}{y}\PYG{p}{):}
+  \PYG{o}{...}
+  \PYG{c+c1}{\PYGZsh{} XGBooster: max\PYGZus{}depth, n\PYGZus{}estimators}
+  \PYG{n}{p1} \PYG{o}{=} \PYG{p}{[}\PYG{n}{intbetween}\PYG{p}{(}\PYG{l+m+mi}{3}\PYG{p}{,}\PYG{l+m+mi}{21}\PYG{p}{),}\PYG{n}{intbetween}\PYG{p}{(}\PYG{l+m+mi}{50}\PYG{p}{,}\PYG{l+m+mi}{800}\PYG{p}{)]}
+  \PYG{c+c1}{\PYGZsh{} LGBM: boosting\PYGZus{}type, num\PYGZus{}leaves, max\PYGZus{}depth, n\PYGZus{}estimators}
+  \PYG{n}{p2} \PYG{o}{=} \PYG{p}{[}\PYG{n}{oneof}\PYG{p}{([}\PYG{l+s+s1}{\PYGZsq{}gbdt\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}dart\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}goss\PYGZsq{}}\PYG{p}{]),}\PYG{n}{intbetween}\PYG{p}{(}\PYG{l+m+mi}{20}\PYG{p}{,}\PYG{l+m+mi}{101}\PYG{p}{),}\PYG{n}{intbetween}\PYG{p}{(}\PYG{l+m+mi}{5}\PYG{p}{,}\PYG{l+m+mi}{100}\PYG{p}{),}\PYG{n}{intbetween}\PYG{p}{(}\PYG{l+m+mi}{200}\PYG{p}{,}\PYG{l+m+mi}{1500}\PYG{p}{)]}
+  \PYG{c+c1}{\PYGZsh{} Random Forest: n\PYGZus{}estimators, max\PYGZus{}depth, min\PYGZus{}samples\PYGZus{}split, min\PYGZus{}samples\PYGZus{}leaf=}
+  \PYG{n}{p3} \PYG{o}{=} \PYG{p}{[}\PYG{n}{intbetween}\PYG{p}{(}\PYG{l+m+mi}{100}\PYG{p}{,}\PYG{l+m+mi}{1200}\PYG{p}{),}\PYG{n}{intbetween}\PYG{p}{(}\PYG{l+m+mi}{10}\PYG{p}{,}\PYG{l+m+mi}{31}\PYG{p}{),}\PYG{n}{intbetween}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{l+m+mi}{20}\PYG{p}{),}\PYG{n}{intbetween}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{l+m+mi}{20}\PYG{p}{)]}
+
+  \PYG{n}{p\PYGZus{}transf} \PYG{o}{=} \PYG{n}{p1}\PYG{o}{+}\PYG{n}{p2}\PYG{o}{+}\PYG{n}{p3}
+  \PYG{o}{...}
+
+\PYG{k}{def} \PYG{n+nf}{buildCls}\PYG{p}{(}\PYG{n}{c}\PYG{p}{,} \PYG{n}{c\PYGZus{}transf}\PYG{p}{):}
+  \PYG{n}{p} \PYG{o}{=} \PYG{n}{getParams}\PYG{p}{(}\PYG{n}{c}\PYG{p}{,} \PYG{n}{c\PYGZus{}transf}\PYG{p}{)}
+  \PYG{n}{clf1} \PYG{o}{=} \PYG{n}{xgb}\PYG{o}{.}\PYG{n}{XGBClassifier}\PYG{p}{(}\PYG{n}{n\PYGZus{}estimators}\PYG{o}{=}\PYG{n}{p}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{],} \PYG{n}{max\PYGZus{}depth}\PYG{o}{=}\PYG{n}{p}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{],} \PYG{n}{n\PYGZus{}jobs}\PYG{o}{=}\PYG{n}{NPROC}\PYG{p}{,} \PYG{n}{objective}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}multi:softmax\PYGZsq{}}\PYG{p}{,}\PYG{n}{tree\PYGZus{}method}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}gpu\PYGZus{}hist\PYGZsq{}}\PYG{p}{)}
+  \PYG{n}{clf2} \PYG{o}{=} \PYG{n}{lgb}\PYG{o}{.}\PYG{n}{LGBMClassifier}\PYG{p}{(}\PYG{n}{boosting\PYGZus{}type}\PYG{o}{=}\PYG{n}{p}\PYG{p}{[}\PYG{l+m+mi}{2}\PYG{p}{],} \PYG{n}{num\PYGZus{}leaves}\PYG{o}{=}\PYG{n}{p}\PYG{p}{[}\PYG{l+m+mi}{3}\PYG{p}{],} \PYG{n}{max\PYGZus{}depth}\PYG{o}{=}\PYG{n}{p}\PYG{p}{[}\PYG{l+m+mi}{4}\PYG{p}{],} \PYG{n}{n\PYGZus{}estimators}\PYG{o}{=}\PYG{n}{p}\PYG{p}{[}\PYG{l+m+mi}{5}\PYG{p}{],}
+                            \PYG{n}{objective}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}multiclass\PYGZsq{}}\PYG{p}{,} \PYG{n}{n\PYGZus{}jobs}\PYG{o}{=}\PYG{n}{NPROC}\PYG{p}{)}
+  \PYG{n}{clf3} \PYG{o}{=} \PYG{n}{RandomForestClassifier}\PYG{p}{(}\PYG{n}{n\PYGZus{}estimators}\PYG{o}{=}\PYG{n}{p}\PYG{p}{[}\PYG{l+m+mi}{6}\PYG{p}{],} \PYG{n}{max\PYGZus{}depth}\PYG{o}{=}\PYG{n}{p}\PYG{p}{[}\PYG{l+m+mi}{7}\PYG{p}{],} \PYG{n}{min\PYGZus{}samples\PYGZus{}split}\PYG{o}{=}\PYG{n}{p}\PYG{p}{[}\PYG{l+m+mi}{8}\PYG{p}{],} \PYG{n}{min\PYGZus{}samples\PYGZus{}leaf}\PYG{o}{=}\PYG{n}{p}\PYG{p}{[}\PYG{l+m+mi}{9}\PYG{p}{],}
+                                \PYG{n}{n\PYGZus{}jobs}\PYG{o}{=}\PYG{n}{NPROC}\PYG{p}{)}
+
+  \PYG{n}{clf} \PYG{o}{=} \PYG{n}{CustomClassifier}\PYG{p}{(}\PYG{n}{clf1}\PYG{p}{,} \PYG{n}{clf2}\PYG{p}{,} \PYG{n}{clf3}\PYG{p}{)}
+
+  \PYG{k}{return} \PYG{n}{clf}
+\end{Verbatim}

@@ -1,0 +1,39 @@
+\BOOKMARK [1][-]{section.1}{Introducci\363n}{}% 1
+\BOOKMARK [2][-]{subsection.1.1}{Problema}{section.1}% 2
+\BOOKMARK [2][-]{subsection.1.2}{Consideraciones}{section.1}% 3
+\BOOKMARK [2][-]{subsection.1.3}{Algoritmos utilizados}{section.1}% 4
+\BOOKMARK [1][-]{section.2}{Caso de estudio 1. Noches fuera del domicilio habitual}{}% 5
+\BOOKMARK [2][-]{subsection.2.1}{Descripci\363n subconjunto}{section.2}% 6
+\BOOKMARK [2][-]{subsection.2.2}{Comparativa}{section.2}% 7
+\BOOKMARK [2][-]{subsection.2.3}{K-Means}{section.2}% 8
+\BOOKMARK [2][-]{subsection.2.4}{Agglomerative Ward}{section.2}% 9
+\BOOKMARK [2][-]{subsection.2.5}{DBScan}{section.2}% 10
+\BOOKMARK [2][-]{subsection.2.6}{Birch}{section.2}% 11
+\BOOKMARK [2][-]{subsection.2.7}{Spectral}{section.2}% 12
+\BOOKMARK [2][-]{subsection.2.8}{KMeans Tuning}{section.2}% 13
+\BOOKMARK [2][-]{subsection.2.9}{Spectral Tuning}{section.2}% 14
+\BOOKMARK [2][-]{subsection.2.10}{Resultados}{section.2}% 15
+\BOOKMARK [1][-]{section.3}{Caso de estudio 2. Diferencia de edad con el c\363nyuge}{}% 16
+\BOOKMARK [2][-]{subsection.3.1}{Descripci\363n subconjunto}{section.3}% 17
+\BOOKMARK [2][-]{subsection.3.2}{Comparativa}{section.3}% 18
+\BOOKMARK [2][-]{subsection.3.3}{K-Means}{section.3}% 19
+\BOOKMARK [2][-]{subsection.3.4}{Agglomerative Ward}{section.3}% 20
+\BOOKMARK [2][-]{subsection.3.5}{DBScan}{section.3}% 21
+\BOOKMARK [2][-]{subsection.3.6}{Birch}{section.3}% 22
+\BOOKMARK [2][-]{subsection.3.7}{Spectral}{section.3}% 23
+\BOOKMARK [2][-]{subsection.3.8}{KMeans Tuning}{section.3}% 24
+\BOOKMARK [2][-]{subsection.3.9}{Spectral Tuning}{section.3}% 25
+\BOOKMARK [2][-]{subsection.3.10}{Resultados}{section.3}% 26
+\BOOKMARK [1][-]{section.4}{Caso de estudio 3. Dependencia en la vivienda}{}% 27
+\BOOKMARK [2][-]{subsection.4.1}{Descripci\363n subconjunto}{section.4}% 28
+\BOOKMARK [2][-]{subsection.4.2}{Comparativa}{section.4}% 29
+\BOOKMARK [2][-]{subsection.4.3}{K-Means}{section.4}% 30
+\BOOKMARK [2][-]{subsection.4.4}{Agglomerative Ward}{section.4}% 31
+\BOOKMARK [2][-]{subsection.4.5}{DBScan}{section.4}% 32
+\BOOKMARK [2][-]{subsection.4.6}{Birch}{section.4}% 33
+\BOOKMARK [2][-]{subsection.4.7}{Spectral}{section.4}% 34
+\BOOKMARK [2][-]{subsection.4.8}{KMeans Tuning}{section.4}% 35
+\BOOKMARK [2][-]{subsection.4.9}{Spectral Tuning}{section.4}% 36
+\BOOKMARK [2][-]{subsection.4.10}{Resultados}{section.4}% 37
+\BOOKMARK [1][-]{section.5}{Contenido adicional}{}% 38
+\BOOKMARK [1][-]{section.6}{Bibliograf\355a}{}% 39

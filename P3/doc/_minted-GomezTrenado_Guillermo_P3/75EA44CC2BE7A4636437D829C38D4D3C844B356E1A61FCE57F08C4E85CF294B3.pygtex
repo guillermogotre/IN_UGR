@@ -1,0 +1,22 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8}]
+\PYG{k}{def} \PYG{n+nf}{reduceBigCat}\PYG{p}{(}\PYG{n}{tr}\PYG{p}{,}\PYG{n}{tst}\PYG{p}{):}
+  \PYG{n}{MIN} \PYG{o}{=} \PYG{l+m+mi}{50}
+  \PYG{n}{gen\PYGZus{}label} \PYG{o}{=} \PYG{l+s+s1}{\PYGZsq{}Other\PYGZsq{}}
+  \PYG{c+c1}{\PYGZsh{} Unimos train y test}
+  \PYG{n}{X} \PYG{o}{=} \PYG{n}{pd}\PYG{o}{.}\PYG{n}{concat}\PYG{p}{([}\PYG{n}{tr}\PYG{p}{,}\PYG{n}{tst}\PYG{p}{],}\PYG{n}{axis}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{)}
+
+  \PYG{c+c1}{\PYGZsh{} Por cada columna de tipo no numérico}
+  \PYG{k}{for} \PYG{n}{k} \PYG{o+ow}{in} \PYG{n+nb}{list}\PYG{p}{(}\PYG{n+nb}{filter}\PYG{p}{(}\PYG{k}{lambda} \PYG{n}{x}\PYG{p}{:} \PYG{n}{tr}\PYG{p}{[}\PYG{n}{x}\PYG{p}{]}\PYG{o}{.}\PYG{n}{dtype} \PYG{o}{==} \PYG{n}{np}\PYG{o}{.}\PYG{n}{dtype}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}O\PYGZsq{}}\PYG{p}{),} \PYG{n}{tr}\PYG{o}{.}\PYG{n}{columns}\PYG{p}{)):}
+      \PYG{c+c1}{\PYGZsh{} Sustituimos valores nules por nueva etiqueta nula}
+      \PYG{n}{col} \PYG{o}{=} \PYG{n}{X}\PYG{p}{[}\PYG{n}{k}\PYG{p}{]}\PYG{o}{.}\PYG{n}{fillna}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}NaN\PYGZsq{}}\PYG{p}{)}
+      \PYG{c+c1}{\PYGZsh{} Contamos ocurrencias}
+      \PYG{n}{c} \PYG{o}{=} \PYG{n}{Counter}\PYG{p}{(}\PYG{n}{col}\PYG{o}{.}\PYG{n}{values}\PYG{o}{.}\PYG{n}{reshape}\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{))}
+      \PYG{c+c1}{\PYGZsh{} Creamos una máscara con instancias a reducir}
+      \PYG{n}{msk} \PYG{o}{=} \PYG{n}{col}\PYG{o}{.}\PYG{n}{isin}\PYG{p}{(}\PYG{n+nb}{list}\PYG{p}{(}\PYG{n+nb}{filter}\PYG{p}{(}\PYG{k}{lambda} \PYG{n}{x}\PYG{p}{:} \PYG{n}{c}\PYG{p}{[}\PYG{n}{x}\PYG{p}{]} \PYG{o}{\PYGZlt{}} \PYG{n}{MIN}\PYG{p}{,} \PYG{n}{c}\PYG{p}{)))}
+      \PYG{c+c1}{\PYGZsh{} Cambiamos la etiqueta}
+      \PYG{n}{col}\PYG{p}{[}\PYG{n}{msk}\PYG{p}{]} \PYG{o}{=} \PYG{n}{gen\PYGZus{}label}
+      \PYG{n}{X}\PYG{p}{[}\PYG{n}{k}\PYG{p}{]} \PYG{o}{=} \PYG{n}{col}
+
+  \PYG{c+c1}{\PYGZsh{} Devolvemos los dos subconjuntos de instancias separados}
+  \PYG{k}{return} \PYG{n}{X}\PYG{o}{.}\PYG{n}{iloc}\PYG{p}{[:}\PYG{n}{tr}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{],:],} \PYG{n}{X}\PYG{o}{.}\PYG{n}{iloc}\PYG{p}{[}\PYG{n}{tr}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]:,:]}
+\end{Verbatim}

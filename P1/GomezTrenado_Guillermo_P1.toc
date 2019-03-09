@@ -1,0 +1,42 @@
+\babel@toc {spanish}{}
+\contentsline {section}{\numberline {1}Introducci\IeC {\'o}n}{2}{section.1}
+\contentsline {subsection}{\numberline {1.1}Propiedades de las instancias}{2}{subsection.1.1}
+\contentsline {subsection}{\numberline {1.2}Caracter\IeC {\'\i }sticas de la muestra}{2}{subsection.1.2}
+\contentsline {section}{\numberline {2}Resultados Obtenidos}{3}{section.2}
+\contentsline {subsection}{\numberline {2.1}Transformaciones preliminares}{3}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}Medidas de calidad y consideraciones afines}{4}{subsection.2.2}
+\contentsline {section}{\numberline {3}An\IeC {\'a}lisis de resultados}{7}{section.3}
+\contentsline {subsection}{\numberline {3.1}ONER}{8}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Naives Bayes}{8}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}Perceptr\IeC {\'o}n Multicapa}{8}{subsection.3.3}
+\contentsline {subsection}{\numberline {3.4}C4.5}{9}{subsection.3.4}
+\contentsline {subsection}{\numberline {3.5}Gradient Boosted Classifier}{9}{subsection.3.5}
+\contentsline {subsection}{\numberline {3.6}Random Forest}{10}{subsection.3.6}
+\contentsline {subsection}{\numberline {3.7}Adaboost}{10}{subsection.3.7}
+\contentsline {subsection}{\numberline {3.8}KNN}{11}{subsection.3.8}
+\contentsline {subsection}{\numberline {3.9}Resultados preliminares}{11}{subsection.3.9}
+\contentsline {section}{\numberline {4}Configuraci\IeC {\'o}n de algoritmos}{12}{section.4}
+\contentsline {subsection}{\numberline {4.1}Perceptr\IeC {\'o}n Multicapa}{12}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}C4.5}{13}{subsection.4.2}
+\contentsline {subsection}{\numberline {4.3}Gradient Boosted Classifier}{14}{subsection.4.3}
+\contentsline {subsection}{\numberline {4.4}Random Forest}{14}{subsection.4.4}
+\contentsline {subsection}{\numberline {4.5}Adaboost}{15}{subsection.4.5}
+\contentsline {subsection}{\numberline {4.6}KNN}{15}{subsection.4.6}
+\contentsline {section}{\numberline {5}Procesado de datos}{16}{section.5}
+\contentsline {subsection}{\numberline {5.1}Imputaci\IeC {\'o}n de datos y CVCF}{16}{subsection.5.1}
+\contentsline {subsubsection}{\numberline {5.1.1}Imputaci\IeC {\'o}n de datos}{16}{subsubsection.5.1.1}
+\contentsline {subsubsection}{\numberline {5.1.2}Cross-Validated Committees Filter (CVCF)}{16}{subsubsection.5.1.2}
+\contentsline {subsubsection}{\numberline {5.1.3}Resultados en los algoritmos}{17}{subsubsection.5.1.3}
+\contentsline {subsection}{\numberline {5.2}Submuestreo}{17}{subsection.5.2}
+\contentsline {subsubsection}{\numberline {5.2.1}Resultados en los algoritmos}{18}{subsubsection.5.2.1}
+\contentsline {section}{\numberline {6}Interpretaci\IeC {\'o}n de resultados}{18}{section.6}
+\contentsline {section}{\numberline {7}Contenido adicional}{21}{section.7}
+\contentsline {subsection}{\numberline {7.1}Condensed Nearest Neighbor (CNN)}{21}{subsection.7.1}
+\contentsline {subsection}{\numberline {7.2}Smart instance selection}{21}{subsection.7.2}
+\contentsline {subsection}{\numberline {7.3}Multiclasificador}{22}{subsection.7.3}
+\contentsline {subsection}{\numberline {7.4}Pesos no uniformes en la matriz de confusi\IeC {\'o}n}{23}{subsection.7.4}
+\contentsline {section}{\numberline {8}Tabla con todos los resultados}{23}{section.8}
+\contentsline {section}{\numberline {9}Bibliograf\IeC {\'\i }a}{24}{section.9}
+\contentsline {section}{\numberline {10}Ap\IeC {\'e}ndice}{26}{section.10}
+\contentsline {subsection}{\numberline {10.1}Estad\IeC {\'\i }sticas datos}{26}{subsection.10.1}
+\contentsline {subsection}{\numberline {10.2}Matriz de correlaci\IeC {\'o}n}{28}{subsection.10.2}

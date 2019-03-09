@@ -1,0 +1,18 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8}]
+\PYG{n}{INTERSTING\PYGZus{}SMALL} \PYG{o}{=} \PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}basin\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}lga\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}payment\PYGZus{}type\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}source\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}waterpoint\PYGZus{}type\PYGZsq{}}\PYG{p}{]}
+\PYG{k+kn}{from} \PYG{n+nn}{sklearn.preprocessing} \PYG{k+kn}{import} \PYG{n}{OneHotEncoder}
+\PYG{k}{def} \PYG{n+nf}{oneHot}\PYG{p}{(}\PYG{n}{tr}\PYG{p}{,}\PYG{n}{tst}\PYG{p}{):}
+  \PYG{n}{keys} \PYG{o}{=} \PYG{n}{INTERSTING\PYGZus{}SMALL}
+  \PYG{c+c1}{\PYGZsh{} Generamos el encoder}
+  \PYG{n}{oh} \PYG{o}{=} \PYG{n}{OneHotEncoder}\PYG{p}{()}
+  \PYG{c+c1}{\PYGZsh{} Lo entrenamos sobre train (no había variables en test que no estuvieran en train)}
+  \PYG{n}{oh}\PYG{o}{.}\PYG{n}{fit}\PYG{p}{(}\PYG{n}{tr}\PYG{p}{)}
+
+  \PYG{c+c1}{\PYGZsh{} Transformamos train y test y lo devolvemenos añadido al resto de columnas}
+  \PYG{n}{mini\PYGZus{}tr} \PYG{o}{=} \PYG{n}{oh}\PYG{o}{.}\PYG{n}{transform}\PYG{p}{(}\PYG{n}{tr}\PYG{p}{)}\PYG{o}{.}\PYG{n}{toarray}\PYG{p}{()}
+  \PYG{n}{mini\PYGZus{}tst} \PYG{o}{=} \PYG{n}{oh}\PYG{o}{.}\PYG{n}{transform}\PYG{p}{(}\PYG{n}{tr}\PYG{p}{)}\PYG{o}{.}\PYG{n}{toarray}\PYG{p}{()}
+
+  \PYG{k}{return} \PYGZbs{}
+      \PYG{n}{pd}\PYG{o}{.}\PYG{n}{concat}\PYG{p}{([}\PYG{n}{tr}\PYG{p}{,}\PYG{n}{pd}\PYG{o}{.}\PYG{n}{DataFrame}\PYG{p}{(}\PYG{n}{mini\PYGZus{}tr}\PYG{p}{)],}\PYG{n}{axis}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{),}\PYGZbs{}
+      \PYG{n}{pd}\PYG{o}{.}\PYG{n}{concat}\PYG{p}{([}\PYG{n}{tst}\PYG{p}{,}\PYG{n}{pd}\PYG{o}{.}\PYG{n}{DataFrame}\PYG{p}{(}\PYG{n}{mini\PYGZus{}tst}\PYG{p}{)],}\PYG{n}{axis}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{)}
+\end{Verbatim}

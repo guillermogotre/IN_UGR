@@ -1,0 +1,440 @@
+\documentclass{article}
+% pre\'ambulo
+
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,activeacute]{babel}
+\usepackage{mathtools}
+\usepackage[utf8]{inputenc}
+\PassOptionsToPackage{hyphens}{url}\usepackage{hyperref}
+
+\expandafter\def\expandafter\UrlBreaks\expandafter{\UrlBreaks%  save the current one
+  \do\a\do\b\do\c\do\d\do\e\do\f\do\g\do\h\do\i\do\j%
+  \do\k\do\l\do\m\do\n\do\o\do\p\do\q\do\r\do\s\do\t%
+  \do\u\do\v\do\w\do\x\do\y\do\z\do\A\do\B\do\C\do\D%
+  \do\E\do\F\do\G\do\H\do\I\do\J\do\K\do\L\do\M\do\N%
+  \do\O\do\P\do\Q\do\R\do\S\do\T\do\U\do\V\do\W\do\X%
+  \do\Y\do\Z}
+
+\usepackage{listings}
+%\usepackage{listingsutf8}
+%\usepackage[spanish]{babel}
+\lstset{
+	%inputencoding=utf8/latin1,
+	literate=%
+         {á}{{\'a}}1
+         {í}{{\'i}}1
+         {é}{{\'e}}1
+         {ý}{{\'y}}1
+         {ú}{{\'u}}1
+         {ó}{{\'o}}1
+         {ě}{{\v{e}}}1
+         {š}{{\v{s}}}1
+         {č}{{\v{c}}}1
+         {ř}{{\v{r}}}1
+         {ž}{{\v{z}}}1
+         {ď}{{\v{d}}}1
+         {ť}{{\v{t}}}1
+         {ň}{{\v{n}}}1                
+         {ů}{{\r{u}}}1
+         {Á}{{\'A}}1
+         {Í}{{\'I}}1
+         {É}{{\'E}}1
+         {Ý}{{\'Y}}1
+         {Ú}{{\'U}}1
+         {Ó}{{\'O}}1
+         {Ě}{{\v{E}}}1
+         {Š}{{\v{S}}}1
+         {Č}{{\v{C}}}1
+         {Ř}{{\v{R}}}1
+         {Ž}{{\v{Z}}}1
+         {Ď}{{\v{D}}}1
+         {Ť}{{\v{T}}}1
+         {Ň}{{\v{N}}}1                
+         {Ů}{{\r{U}}}1,
+	language=bash,
+	basicstyle=\ttfamily,
+  columns=fullflexible,
+  frame=single,
+  breaklines=true,
+  postbreak=\mbox{{$\hookrightarrow$}\space},
+}
+
+\usepackage{graphicx}
+\graphicspath{ {screens/} }
+
+\PassOptionsToPackage{hyphens}{url}\usepackage[hyphens]{url}
+
+\usepackage{amssymb}
+\usepackage{stmaryrd}
+\usepackage{hyperref}
+
+
+% macros 
+\newcommand{\img}[2]{
+\noindent\makebox[\textwidth][c]{\includegraphics[width=#2\textwidth,]{#1}}%
+}
+
+% title
+\title{Visión por computador\\
+Relación 1}
+
+\author{Guillermo G\'omez Trenado | 77820354-S \\
+guillermogotre@correo.ugr.es}
+
+\begin{document}
+% cuerpo del documento
+
+\maketitle
+
+\tableofcontents
+
+\newpage
+
+\section{Introducción}
+
+En esta práctica el problema al que nos enfrentamos es la predicción de la popularidad de una noticia en base a sus características, para eso se ha definido el número de veces compartida una noticia para que sea exitosa como 3000, se han tabulado las características que describo en el siguiente apartado y se ha catalogado como "popular" o "no popular". La muestra se ha extraido de la web \textit{Mashable.com}. 
+
+\subsection{Propiedades de las instancias}
+
+Para clasificar cada instancia contamos con 58 propiedades más la clase\footnote{FERNANDES (2015)}, morfológicas, semánticas y contextuales. Por un lado contamos con características como el número de palabras en el título, subtítulo, texto y etiquetas, el número de enlaces, de imágenes o de videos, e incluso la longitud media de las palabras que aparecen en el texto. Por otro lado, mediante el uso de algoritmos de minería de opinión o análisis de sentimientos se ha evaluado el texto asignando un valor cuantitativo de polaridad a cada palabra y se define tanto mínimo, máximo y media para polaridad positiva y negativa como el porcentaje de palabras positivas y negativas respecto a la totalidad del texto; asimismo mediante \textit{Latent Dirichlet Allocation}\footnote{BLEI (2003)} se analizaron los artículos de toda la web definiendo las cinco categorías más populares y se define la distancia a la primera, a las dos primeras y así hasta la distancia hasta las cinco categorías más populares. Por último, contamos también con información relativa al contexto, como el día de la semana y la popularidad de las etiquetas del artículo. Esta no es una descripción exhaustiva\footnote{Dataset, accedido el 4 de Noviembre \url{https://sci2s.ugr.es/sites/default/files/files/Teaching/GraduatesCourses/InteligenciaDeNegocio/Curso18-19/onlinenewspopularity.names}} sino que el propósito de la descripción es dibujar de un brochazo el tipo de información con la que contamos para estimar la popularidad de una noticia.
+
+\subsection{Características de la muestra}
+
+Por la propia naturaleza de la muestra nos encontramos con dos clases \textbf{no balanceadas}, pues es mucho menos frecuente encontrar noticias populares que no populares, de ahí el interés que suscita este tivo de investigaciones, a fin de no sólo predecir la potencial popularidad de una noticia, sino el potencial derivado de este conocimiento para modificar las noticias a fin de estimular su popularidad. 
+
+Del mismo modo, tal como podemos ver en el \hyperref[subsec:stats]{apéndice 1}, en la muestra aparecen hasta 379 celdas vacías por columna repartidas de forma heterogenea por los datos, que de los más de 30000 ejemplos que tenemos en la muestra de aprendizaje no debería suponer un obstáculo significativo pero sí que tendremos que atajar este problema para algunos algoritmos de aprendizaje. Los datos no están normalizados, y encontramos tanto variables numéricas como categóricas.
+
+En el \hyperref[subsec:corr]{apéndice 2} podemos ver la matriz de correlación. En primer lugar podemos apreciar cómo ninguna variable tiene una fuerte correlación con la clase de salida, yendo desde $-.124$ hasta $0.181$, las más destacables por si inmediato sentido semántico son una distancia baja a las dos primeras categorías del \textit{LDA} ---sin embargo está inversamente relacionado la distancia a las tres primeras---, pertenecer al canal de \textit{mundo} o \textit{entreteniemiento}, o que la longitud media de las palabras sea baja.
+
+Sin embargo, como vemos en la siguiente gráfica ---hecha con las doce características con mayor valor absoluto de correlación---, el probelma no parece ser fácilmente separable, al menos de forma lineal.
+
+\img{para}{1}
+
+\section{Resultados Obtenidos}
+
+\subsection{Transformaciones preliminares}
+\label{subsec:preproc1}
+
+El primer procesado de los datos que realizamos es la normalización a fin de facilitar el aprendizaje a algoritmos sensibles a esto como son el KNN ---que la distancia euclídea estándar falla para evaluar la distancia entre dos instancias de forma homogénea para todas las características en datos no normalizados---, o las redes neuronales ---que los datos no normalizados ralentizan la convergencia debido a la propagación hacia atrás de rangos muy dispares---. 
+
+Además de la anterior he aplicado otros dos preprocesados a la totalidad de los datos aunque se nos aconsejo en el sentido contrario, las razones para esto son dos, primero una teórica, el preprocesado por columnas analiza únicamente una variable en su totalidad, dándonos una información analítica no relacionada con la clase a estimar, sino de la naturaleza del tipo de dato, por lo tanto, de la misma forma que la normalización, este tipo de transformaciones no nos ofrece una ventaja poco realista sobre nuestra capacidad de clasificación; por otro lado, una razón práctica, a medida que vayamos aplicando otros algoritmos de preprocesado que sí tienen en cuenta la totalidad de las columnas, estos sí realizados dentro de la validación cruzada, tratar con un número excesivo de características ralentiza tanto el análisis que resulta impracticable, y al fin y al cabo, el objetivo de esta práctica no es obtener el mejor resultado posible sino dar nuestro primer chapoteo en la minería de datos, y un flujo de trabajo ágil sirve infinitamente mejor a este propósito.
+
+El primer preprocesado realizado es un \textbf{filtro de baja varianza}, como lo realizamos después de la normalización buscamos variables que sean próximas a la columna constante excepto en unos pocos valores, este es el primer sacrificio que hacemos, es posible ---aunque ahora veremos que no parece probable--- que estas variables sean tremendamente útiles para la clasificación, pero lo más habitual es que estas variables con baja varianza en el peor de los casos resten algo de información al algoritmo de aprendizaje, y en el mejor de los casos introduzcan una distracción a dichos algoritmos que nos interesa eliminar. Podemos observar en la siguiente table, que un umbral de $0.01$ ---de todos los valores con los que probé---, evaluado con Random Forest nos permite pasar de 52 columnas a 32, conservando casi la totalidad de nuestra capacidad predictiva a juzgar por la última columna del análisis que corresponde al área bajo la curva ROC devuelto por KNIME.
+
+\img{variance}{1}
+
+El segundo preprocesado que aplicamos fuera de la validación cruzada es un \textbf{filtro de correlación}, aquí queremos eliminar la redundancia de datos, como dejamos fuera del análisis la correlación con la clase a predecir lo que medimos es la correlación entre variables explicativas y eliminar aquellas que se expliquen mutuamente, para quedarnos sólo con una de ellas. En este caso un umbral de $0.8$ ---de todos los valores con los que experimenté--- nos permite conservar casi todo nuestro poder de clasificación en las mismas condiciones que en el párrafo anterior eliminando dos columnas más, es decir, pasando de 32 variables a 30.
+
+\img{corr2}{1}
+
+Con todo lo anterior hemos conseguido reducir la dimensionalidad del problema conservando prácticamente la totalidad de la información a la luz de los resultados preliminares arrojado por el clasificador, he decidido utilizar Random Forest para el análisis pues es el que mejor resultados arrojaba en el \textit{paper} original. Como ya comentaba, este tipo de preprocesado no creo que sea descabellado hacerlo fuera del proceso de entrenamiento y sobre la totalidad de los datos ---como he visto que se hace habitualmente, incluso en la documentación de KNIME \footnote{Documentación de KNIME, accedido el 4 de Noviembre \url{https://www.knime.com/nodeguide/applications/model-selection-and-management/model-selection-sampled}}---; permitiéndonos hacer un ulterior análisis más ágil e interesante.
+
+\subsection{Medidas de calidad y consideraciones afines}
+
+Para todos los experimentos que vamos a realizar de ahora en adelante ---y los dos anteriores--- vamos a tomar como clase positiva la clase "popular", y las medidas de calidad reflejarán este hecho y no el contrario ---clasificación binaria--- "no popular". El motivo último de esta decisión radica en la utilidad última de este tipo de predictores, queremos ser capaces de estimar cuándo un artículo particular será popular por el impacto económico que tiene esta circunstancias para empresas de noticias online que aspiran a la viralización de sus entradas logrando la máxima difusión posible. 
+
+Lo anterior tiene repercusión en varios aspectos, el primero es, qué medidas de las que evaluaremos son las más interesantes para nuestro problema, pues esto varia ampliamente dependiendo del problema, de forma análoga a como sucede en una cadena de montaje, si producimos piezas de valor ínfimo lo más probable es que nos interese hacer tantas como podamos a la mayor velocidad posible descartando posteriormente aquellas defectuosas, sin embargo, si lo que producimos son por ejemplo vehículos, o equipos de alta precisión, lo que nos interesa es no tanto sacrificar la eficacia sino la eficiencia, reduciendo la velocidad de producción pero garantizando una tasa de éxito ---producto sin defectos--- lo más alta posible, por los altos costes asociados a un fallo. En este problema que tenemos entre manos nos encontramos con una circunstancia análoga a la descrita en primer lugar, queremos saber qué noticias serán exitosas con dos objetivos, el primero probablemente invertir en mayor publicidad para éstas y estimular la visibilidad de las mismas para el público; y en segundo lugar buscar características que parezcan indicar el potencial de popularidad con el objetivo último de modificar las propias noticias formalmente para aumentar la visibilidad general del portal de noticias. Por lo anterior nos interesarán más aquellos algoritmos de aprendizaje cuyas medidas nos indiquen no sólo su alta capacidad predictiva sobre el conjunto de evaluación, sino en qué medida estos favorecen la predicción de la clase positiva, aun a riesgo de clasificar erróneamente artículos \textit{no populares} como \textit{populares}.
+
+Contamos con distintas medidas para evaluar el rendimiento, además de las cuatro 
+
+\begin{enumerate}
+
+\item Los cuatro valores de la matriz de confusión ---\textit{true positives}, \textit{false positives}, \textit{true negatives} y \textit{false negatives---}, tomando como clase positiva la clase \textit{popular}.
+
+\item \textit{Positive predictive value}, que nos indica la proporción de aciertos entre todas las instancias clasificadas positivamente.
+
+\item \textit{True positive rate} y \textit{True negative rate} que nos indican la proporción de aciertos respecto al \textit{ground truth} para la clase positiva y negativa.
+
+\item \textit{F1-score}, que relaciona la proporción de aciertos entre las clasificadas positivamente y la proporción de aciertos respecto a la verdad. En definitiva, este valor será alto cuando ambas medidas sean altas y bajo cuando uno de los dos ---o los dos--- sean bajos.
+
+\[ F1 = 2\frac{PPV \cdot TPR}{PPV+TPR} \]
+
+\item \textit{False positive rate} y \textit{False negative rate}, que nos indican qué proporción hemos clasificado incorrectamente respecto al total de la clase que debían clasificar, intuitivamente esto es qué proporción de instancias estamos dejando de clasificar correctamente.
+
+\item \textit{Area bajo la curva ROC}. La curva ROC dibuja la relación entre el \textit{TPR} y el \textit{FPR}, desplazando para esto el umbral de corte en la confianza de la predicción para clasificar positiva o negativamente. El área bajo la curva es una medida entre 0 y 1 que define qué proporción de la gráfica está bajo esta curva, el peor caso posible es $0.5$ ---recta diagonal--- pues en clasificación binaria, clasificar correctamente la mitad de los casos es equivalente a tirar una moneda al aire y apuntar las caras, tanto un valor próximo a $0$ como un valor próximo a $1$ serían clasificadores deseables, el segundo de forma evidente, y el primero porque un clasificador que falle sistemáticamente es tan bueno como el que acierte siempre, sólo hay que invertir la predicción.
+
+\img{roc}{0.5}
+
+\item \textit{G-mean}, medida de equilibrio entre los aciertos para ambas clases.
+
+\[ Gmean = \sqrt{TPR\cdot TNR} \]
+
+\item \textit{G-measure}, relaciona los aciertos respecto a los clasificados positivamente y los de la clase positiva. Si definiéramos un clasificador que siempre estima la clase positiva, su $TPR$ sería igual a 1, pero su $PPV$ sería igual a la proporción de instancias pertenecientes a la clase positiva. Esta medida nos da la media geométrica de ambas medidas.
+
+\[ Gmeasure = \sqrt{PPV\cdot TPR} \]
+
+\item \textit{Accuracy}, proporción de aciertos entre la totalidad de los ejemplos.
+
+\end{enumerate}
+
+No podemos llevar a cabo nuestro análisis basándonos únicamente en una de estas medidas, en primer lugar por la parcialidad de cada una de estas, y en segundo lugar, por las circunstancias a las que hacíamos referencia en la analogía de la cadena de montaje. En nuestro análisis nos centraremos como medida de calidad e intentamos maximizar tanto el  bajo la curva ROC ---que es buen indicador de la calidad de un predictor, aunque es susceptible al desplazamiento del umbral de corte mientras que nosotros siempre separamos las dos clases en una confianza de $0.5$---; y $F1-score$, pues de alguna manera nos orienta sobre nuestra capacidad predictiva de la clase positiva que es la que nos interesa especialmente. El valor de \textit{accuracy} en nuestro caso es poco significativo, pues al estar la clase profundamente desbalanceada el algoritmo que clasifique con la clase mayoritaria, como veremos a continuación obtendría un valor de $0.775$, el cual podría parecer a primer vista razonablemente bueno, y sin embargo expresa una nula capacidad predictiva, más aún para nuestro objetivo de priorizar las clasificaciones positivas.
+
+A cada salida de los resultados de un modelo de aprendizaje le aplicamos dos nodos, \textit{Extended Scorer}, donde calculamos las métricas descritas, y \textit{ROC Curve}, de donde sacamos el valor para el area bajo la curva.
+
+\img{measure1}{0.7}
+\\
+
+\img{measure2}{0.7}
+
+\section{Análisis de resultados}
+
+Hemos tomado 8 algoritmos de aprendizaje de los que posteriormente conservaremos 6: ONER, Naives Bayes, MLP, C4.5, Gradient Boosted, Random Forest, Adaboost y KNN. En los siguientes epígrafes los describiremos individualmente, sin embargo, al respecto del conjunto de clasificadores puedo decir que he intentado obtener una muestra de familias heterogénea, con prevalencia de aquellos basados en árboles sencillamente porque suelen ser algoritmos rápidos y lamentablemente KNIME no es el entorno más eficiente para problemas grandes y el interés último de esta práctica es experimentar con un problema real con dificultades reales, la definición de hiperparámetros de los clasificadores y el preprocesado de datos a fin de favorecer el aprendizaje. Y esto sería impracticable con ejecuciones individuales de 10 o 15 minutos.
+
+Describiremos cada algoritmo y al final veremos la comparativa de resultados. Tanto para este apartado como para el resto he decidido no mostrar la gráfica de la curva ROC pues si bien es una herramienta muy interesante para medir la bondad de un modelo, la comparativa entre ellas resulta pobre y torpe, y utilizaremos las métricas antes mencionadas para enfrentar los algoritmos y reflexionar sobre sus resultados.
+
+\subsection{ONER}
+
+Este es el algoritmo de referencia, y la métrica de cualquier otro algoritmo de aprendizaje debería superar al menos éste. Analizamos la clase más frecuente y predecimos ese valor con confianza igual a $1$.
+
+\img{oner}{1.0}
+
+\subsection{Naives Bayes}
+
+Es un clasificador probabilístico, basado en el teorema de Bayes, que calcula la probabilidad de obtener la clase positiva condicionada a las condiciones de la instancia. Para poder realizar el cálculo se asumen que las características son independientes. Como utiliza la frecuencia, o una función de densidad ---variables categóricas o numéricas respectivamente--- para el cálculo de la probabilidad es vulnerable a muestras desbalanceadas como es nuestro caso. 
+
+\img{bayes}{0.5}
+
+\subsection{Perceptrón Multicapa}
+
+Este algoritmo es un regresor, como todos los regresores se puede adaptar a un problema de clasificación pero no es siempre posible en el sentido contrario. Utiliza una colección de perceptrones distribuidos en capas ---combinación lineal con los valores de entrada--- con una función no lineal entre capa y capa ---normalmente reLU--- para el cálculo de los valores de salida. En el modelo de clasificación binaria al valor de salida le aplica la función sigmoide para obtener un valor entre 0 y 1 que estime la probabilidad de pertenecer a una u otra clase. Para cada error va actualizando los pesos de cada nodo con la derivada parcial evaluada en ese nodo multiplicado por el error y una tasa de aprendizaje. Idealmente este modelo es robusto contra clases desbalanceadas pues cuando el error es igual a 0 el valor de propragación es 0. Para este algoritmo he tenido que aplicar preprocesado pues no puede trabajar con celdas vacías, en el apartado correspondiente hablaremos de la técnica de \textit{data imputation} utilizada, se resume en una primera imputación con un regresor lineal, y una segunda imputación para los valores aún ausente debido a problemas en el cálculo por otras celdas vacías donde aplico el valor medio.
+
+\img{mlp}{0.5}
+
+\subsection{C4.5}
+
+Este es uno de los algoritmos basados en árboles de decisión que vamos a utilizar, aunque es superado habitualmente en la literatura por otros algoritmos más robustos, es interesante tenerlo aquí porque es un algoritmo rápido que será la base de otros nodos que usaremos como en la implementación posterior que haremos del CVCF. Tolera celdas vacía y evita el sobreaprendizaje con estrategias de poda.
+
+\img{c45}{0.5}
+
+\subsection{Gradient Boosted Classifier}
+
+Utiliza una colección de predictores débiles obtenidos de forma iterativa ---\textit{boosting}--- formados por árboles de poca profundidad en nuestro caso y los optimiza posteriormente con el gradiente de una función de pérdida diferenciable al igual que hace el perceptrón multicapa. Permite realizar la modificación del algoritmo con gradiente estocástico tomando muestras aleatorias de la totalidad de las instancias, en este apartado usamos la configuración por defecto que utiliza la totalidad de los datos en cada aplicación del gradiente descendiente. Debido a la optimización mediante el gradiente es robusto contra clases desbalanceadas pero puede adolecer de sobreajuste. He elegido este método porque posee la potencia de los \textit{ensamble learners} y de los modelos optimizados por escalada y parece un candidato competente.
+
+\img{gradboost}{0.5}
+
+\subsection{Random Forest}
+
+Este algoritmo, al igual que el anterior se basa en una colección de clasificadores débiles basados en árboles de decisión aunque en vez de ir aprendiendo el error de otro clasificador débil, entrena numerosos árboles pequeños en una porción de las características de entrada, utilizando posteriormente un proceso de votación para definir la clase de salida. Por la forma en la que se define la ganancia para generar los nodos de los árboles este tipo de modelos es vulnerable a conjuntos de datos no balanceados. He elegido este algoritmo por dos motivos, dentro de la familia de \textit{ensamble learners} utiliza la técnica de \textit{bagging} como ya hemos descrito en vez de \textit{boosting} como el anterior, y además es referenciado en el \textit{dataset} como el algoritmo que arroja el mejor resultado.
+
+\img{randfor}{0.5}
+
+\subsection{Adaboost}
+
+Este otro método basado en \textit{boosting} con árboles de decisión, la diferencia con \textit{Gradient Boosted Classifier} es que no utiliza gradiente descendente para optimizar los árboles y además va adaptando los árboles ulteriores a las características de las muestras mal clasificadas por los árboles sencillos anteriores. Lo he elegido porque también viene referenciado en el \textit{dataset} y puede ser interesante compararlo con el clasificador \textit{Gradient Boosted}. Es, al igual que el anterior vulnerable al ruido y los \textit{outliers}, así como al sobreaprendizaje, aunque puede ser paliado limitando el número de árboles.
+
+\img{adaboost}{0.5}
+
+\subsection{KNN}
+
+Es el último clasificador del conjunto, si bien no es viable en entornos de producción, por su relevancia histórica y por sus especiales características ---los datos son el modelo--- es siempre interesante tomarlo de referencia en cualquier problema de aprendizaje. Los problemas de sobreaprendizaje se pueden paliar hasta cierto punto definiendo un número de vecinos grande, aunque esto penaliza el resultado de las estrategias para evitar la vulnerabilidad en problemas no balanceados, que consisten en ponderar el voto de cada vecino por la distancia hasta la instancia evaluada. Como no puede calcular la distancia sobre instancias con celdas vacías ignora éstas; este problema lo atajaremos en el apartado del preprocesado.
+
+\subsection{Resultados preliminares}
+
+Utilizando la configuración por defecto en cada algoritmo obtenemos los siguientes resultados.
+
+\img{resultados1}{1.1}
+
+Antes de realizar el análisis hay que aclarar que tenemos dos medidas para el area bajo la curva, la primera es una aproximación para clasificadores que no devuelven medida de confianza, mientras que la segunda sí está calculada a través de aproximaciones a la integral, es ésta segunda la que utilizamos y dejamos la primera como referencia.
+
+Vemos que los tres algoritmos que mejor desempeño tienen según esta medida son \textit{Gradient Boosted}, \textit{Random Forest} y {MLP} ---habrá que ver si MLP sigue siendo competitivo cuando todos los demás algoritmos tengan imputación de datos aplicada---. Vemos para el AUC valores superiores a $0.5$ lo cual siempre es una buena noticia, pero sin embargo vemos que la otra medida que nos interesa, $F1$, tiene valores por debajo de $0.1$, esto se debe al bajo \textit{TPR}; los algoritmos que mejor lo area obtienen no coinciden con el que posee mejor valor para $F1$ ---Naives Bayes---, esto se debe sin duda alguna a la muestra no balanceada, que está premiando la selección de la clase dominante ---casi 4 veces mayor---, esto no es sorpresa para \textit{Gradient Boosted }y \textit{Random Forest}, pero sí que lo es para MLP, el motivo de esta vulnerabilidad a la falta de balanceo sea posiblemente un número reducido de iteraciones para el gradiente descendiente, lo que dirigirá los pesos de los nodos en un primer momento a producir como resultado valores que favorezcan a la clase dominante, es posible que si dejáramos más iteraciones el algoritmo corriendo converja a  soluciones que hagan subir el valor para $F1$, aunque haría seguramente falta ir enfriando la tasa de aprendizaje progresivamente para evitar que la medida de error vaya zigzagueando, lamentablemente en KNIME no podemos hacer este tipo de análisis aunque probablemente tengamos oportunidad de analizarlo en prácticas posteriores.
+
+\section{Configuración de algoritmos}
+
+A partir de este apartado nos vamos a quedar con sólo seis algoritmos de aprendizaje, descartando el \textit{ONER} y \textit{Naives Bayes}, aunque tendremos ocasión de probarlo luego cuando balanceemos las clases.
+
+Aunque lo interesante sería definir las horquillas de los valores para cada uno de los $n$ parámetros que queremos modificar e ir evaluando el algoritmo en muestras aleatorias de ese volumen de $n$ dimensiones definido por el espacio de parámetros posibles, esto no es tan fácil con KNIME como lo puede ser en Python ---habría que generar todas las tablas, ir sacando los valores e introducirlos al algoritmo mediante variables de flujo---, así que lo que vamos a hacer es evaluar para cada clasificador 5 configuraciones distintas evaluando hipótesis que nos interesan.
+
+Este análisis ofrece una dificultad añadida, y es que en la estimación de la potencia de un algoritmo en base a métricas dispares no hay un procedimiento definido, y esta tarea se hace harto más complicada cuando sin métodos estadísticos no podemos afirmar cuando una diferencia es estadísticamente significativa, especialmente para diferencias entre $0.05$ y $0.005$.
+
+\subsection{Perceptrón Multicapa}
+
+% no me permite modificar la tasa de aprendizaje
+Vamos a probar dos hipótesis, en primer lugar comprobar si tal y como especulábamos, el bajo valor de $F1$ se debe al bajo número de \textit{epochs}; y en segundo lugar, ver el impacto de ampliar la profundidad del árbol con el mismo número total de nodos ocultos. La configuración por defecto utiliza 2 capas ocultas de 10 neuronas cada una y un total de 100 iteraciones. Es sorprendente que el algoritmo de MLP implementado en KNIME no permita modificar la tasa de aprendizaje, al menos de forma inmediata a través del panel de configuración.
+
+\img{mlptuning}{1.2}
+
+Al respecto del primer punto podemos ver que efectivamente parece que los pobres resultados iniciales se debían a un bajo tiempo de aprendizaje, y al aumentar el número de iteraciones conseguimos resistencia frente al desabalanceo de la muestra. Como era de esperar la relación no es lineal y es que a medida que el MLP se acerca al punto de convergencia cada vez es más difícil aprender ---imposible con la tasa de aprendizaje demasiado alta---. El tiempo de ejecución del MLP con 500 iteraciones es demasiado alto, pero vamos a utilizar a partir de ahora el modelo con una sola capa oculta de 20 nodos y 200 iteraciones.
+
+\img{mlpfinaltuning}{1.2}
+
+Es un fenómeno estudiado en la literatura que aumentar el número de capas permite reducir el número de nodos para calcular cualquier función ---reduciendo la complejidad en espacio del modelo--- pero dificulta el aprendizaje porque el valor de \textit{backpropagation} en las capaz inferiores va acercándose cada vez más a $0$, y hay que utilizar estrategias ---no implementadas en KNIME--- que favorezcan el aprendizaje en estas capas, como el modelo residual\footnote{https://arxiv.org/abs/1512.03385} o \textit{highway}\footnote{https://arxiv.org/abs/1505.00387}. En nuestro caso observamos cómo la profundidad del modelo está inversamente relacionada con la calidad de los resultados, es posible que pudieramos paliar parcialmente este fenómeno con un número mayor de iteraciones pero no nos interesa en este punto de la práctica.
+
+\subsection{C4.5}
+
+Para este algoritmo en primer lugar analizamos las dos métricas estudiadas en clase, \textit{GainRatio} y \textit{GINI} ---por defecto---; y en segundo lugar estudiamos el efecto de la morfología del arbol: con y sin poda; y definiendo el número mínimo de nodos por hoja a 2 ---por defecto---, 4 y 8. 
+
+\img{c45tuning}{1.2}
+
+Se aprecia que el desempeño del algoritmo con la métrica de ramificación \textit{GainRatio} es peor que \textit{GINI}. Asimismo se observa que la ausencia de poda, consigue una valor \textit{F1} mayor pero disminuye significativamente el área, esto se debe seguramente a que la falta de poda nos devuelve un clasificador parecido al 1NN, y de hecho la proporción de clasificados positivamente y los clasificados negativamente refleja un poco la proporción de la muestra \textit{populares/no populares}. En el momento que empezamos a podar y a aumentar el número mínimo de ejemplos por nodo nos encontramos con que el efecto de la falta de balanceo aumenta, quedando probablemente perdidos los pocos valores positivos entre la generalización producida por la poda, donde la clasa mayoritara domina al clasificador. Parece que el C4.5 por defecto, con métrica GINI y poda con mínimo 2 nodos por hoja supone el mejor equilibrio entre la capacidad de predicción sobre la muestra y la capacidad de predicción de los casos positivos, éste será el que utilizaremos.
+
+\subsection{Gradient Boosted Classifier}
+
+Para este algoritmo nos interesa analizar el efecto en el resultado de varios parámetros: limitar el número máximo de niveles de un árbol a 2 ---en vez de 4 por defecto--- para conseguir árboles verdaderamente superficiales y a 8, para conseguir árboles de mayor profundidad que consigan mayor separación en cada árbol del \textit{boosting}; después hacer sampleo sobre las $n$ variables, tomando $sqrt(n)$ variables en cada árbol ---y aumentando de 100 árboles por defecto a 600--- para conservar el mismo número de variables usadas en total; aumentar al doble ---200 frente a 100--- el número de árboles, y por último aplicar sampleo sobre las instancias.
+
+\img{gbtuning}{1.2}
+
+Podemos apreciar cómo aumentar el número de árboles parece mejorar el valor de $F1$ sin deteriorar significativamente el valor del $AUC$. Por otro lado parece que 4 niveles por árbol es el punto dulce de equilibrio entre superficialidad de los árboles y demasiada especialización, el mejor valor para este parámetro suele ser estrictamente experimental y es difícil encontrar una justificación teórica pues dependerá del tipo de muestra. Por otro lado, utilizar árboles con conocimiento parcial  ---muestreo en las columnas--- parece mejorar el $F1$ pero no podemos discriminar si es por el mayor número de árboles o por la eliminación del \textit{bias}, sin embargo parece proporcionar un rendimiento ligeramente peor en el área. Parece entonces, que entrenar cada árbol con un muestreo aleatorio sin repetición de la mitad de la población y aumentar por 2 el número de árboles para compensar el número de filas total utilizadas en el algoritmo nos proporciona un equilibrio entre capacidad de predicción sobre la muestra total y potencia en la detección de casos positivos, ésta será la configuración que utilicemos.
+
+\subsection{Random Forest}
+
+En este caso, nos enfrentamos a algoritmo \textit{ensamble} basado en \textit{bagging} y los efectos de manipular el número mínimo de instancias por hoja y el número máximo de niveles por árbol deberá tener un efecto contrario.
+
+\img{rftuning}{1.2}
+
+Lo que observamos es interesante, y es que limitar la profundidad del árbol tiene un efecto perjudicial para el aprendizaje, pues por la falta de balanceo en la muestra, la generalización que se produce por cortar los árboles demasiado pronto siempre es hacia la clase dominante, y de hecho, mientras menor sea el valor máximo para la altura del árbol, peor es el rendimiento en $AUC$, con total seguridad debido a que la confianza que devuelve es aún mayor para la clase dominante. Vemos que todos los árboles con profundidad limitada han devuelto 0 instancias catalogadas con la clase positiva. Por otro lado, definir en 2 el número mínimo de instancias por hoja parece no afecta a la medida del área pero sí penaliza en la medida de $F1$, debido probablemente a la falta de balanceo donde la generalización favorece a la clase mayoritaria. Como la potencia de este algoritmo es el sampleo en columnas, parece que los mejores parámetros son los que venían por defecto, no poniendo límite al número mínimo de nodos por hoja, y no obligando a truncar los árboles a determinada altura. 
+
+Por último parece que aumentar el número de árboles beneficia de forma general al algoritmo,  y es posible que esta sea una modificación trivial, si el problema puede efectivamente aprenderse, parece que introducir mayor variabilidad en las respuestas debido al incremento en el número de árboles puede producir un consenso más robusto, a costa de doblar el tiempo de cómputo.
+
+\subsection{Adaboost}
+
+Adaboost en Weka por defecto utiliza \textit{Decision Stump}, vamos a probar el resultado con este algoritmo basado en árboles y con \textit{C4.5}. Asimismo modificaremos el número de iteraciones de 10 ---por defecto--- a 50, y experimentaremos pasando el umbral de peso de 100 ---por defecto--- a 90, que comentan en la documentación puede acelerar el proceso de cómputo.
+
+\img{abtuning}{1.2}
+
+En primer lugar, de manera informal, no he apreciado que reducir a 90 el valor para \textit{weigth threshold} tenga un impacto significativo en el tiempo de ejecución. A juzgar por el área bajo la curva ROC, \textit{DS} es un mejor algoritmo que \textit{C4.5}, aunque el desempeño en la métrica $F1$ es significativamente peor. Vamos a utilizar el DS en Adaboost e intentaremos paliar posteriormente este efecto balanceando la muestra. Ésta es probablemente la comparación más difícil de este epígrafe pues no puedo posicionarme con seguridad en qué algoritmo puede ser más interesante para nuestro problema, más aún cuando queda todo el preprocesado pendiente.
+
+
+\subsection{KNN}
+
+Finalmente en el KNN las opciones de configuración son menores ---ignorando la posibilidad de customizar la métrica de distancia---, modificaremos el número de vecinos ---3, 5 y 9---, y el cálculo de la clase ponderado por la distancia de cada vecino; la fila no comentada utiliza 3 vecinos y peso en el cálculo de la clase.
+
+\img{knntuning}{1.2}
+
+Los resultados muestran que aumentar el tamaño de la vecindad mejora el resultado en $AUC$, pero esto se debe sin lugar a dudas por la falta de balanceo de la muestra, pues KNN es tremendamente vulnerable a este fenómeno, sin embargo, como posteriormente aplicaremos preprocesado para eliminar el ruido y balancear las clases vamos a quedarnos con la opción inicial, 3 vecinos ponderados por distancia, que ofrece el mejor valor para la medida $F1$.
+
+
+\section{Procesado de datos}
+
+Para el preprocesado de datos, además de normalizar y la reducción de carasterísticas que comentábamos en el \hyperref[subsec:preproc1]{apartado 2.1}, realizo reducción de ruido e imputación de datos.
+
+\subsection{Imputación de datos y CVCF}
+
+\subsubsection{Imputación de datos}
+
+\img{prep1}{0.6}
+
+Por simplicidad analizamos este paso primero, aunque lo realizamos después de la reducción de ruido. Utilizamos el nodo \textit{Missing Value} para imputar datos, hacemos una primera pasado utilizanod un regresor lineal, y como este método de imputación no puede resolver todas las celdas por dependencias con otras celdas vacías, añadimos un segundo paso en el que imputamos la media, esta decisión de usar la media se basa en el hecho de que aunque cambie la distribución de los datos reduciendo la desviación típica creo que representa mejor la naturaleza del dato, y en análisis preliminares que realicé se demostró que era más efectivo. Las variables categóricas utilizan el valor más frecuente para imputar el valor, me habría gustado probar con KNN para imputación pero KNIME no permite este algoritmo y no era inmediata su implementación. Finalmente transformo las variables categóricas en numéricas con \textit{One to many} para homogeneizar la entrada de todos los clasificadores.
+
+\subsubsection{Cross-Validated Committees Filter (CVCF)}
+
+Como no era excesivamente complejo de implementar en KNIME, adapté el algoritmo al modelo de flujos con el que trabaja KNIME. En cada iteración de CV-5 aplico el modelo sobre la totalidad de los datos, aquellas instancias que no hayan podido ser clasificadas correctamente ni una sola vez aun habiendo sido simultaneamente parte del entrenamiento de C4.5 y de la evaluación son eliminadas en la salida. 
+
+
+
+%200 valores
+
+\img{ipf}{1}
+
+Evidentemente, este algoritmo se aplica únicamente sobre la porción de entrenamiento del CV-5 exterior que evalúa el rendimiento de un algoritmo de aprendizaje cualquiera. Con este algoritmo consigo eliminar aproximadamente unas 200 instancias ruidosas en cada pasada por el nodo.
+
+\subsubsection{Resultados en los algoritmos}
+
+\img{ruidoimpu}{1.2}
+
+El resultado obtenido era el esperado, todos los algoritmos sin excepción arrojan mejores medidas tanto en $AUC$, como en $F1$, aunque ninguno consigue superar a la versión con ruido de otro algoritmo, es decir, ha habido mejora \textit{intra-algoritmo} pero no \textit{inter-algoritmo}.
+
+\subsection{Submuestreo}
+
+En un acercamiento preliminar a esta práctica intenté aplicar \textit{SMOTE} como estrategia de sobremuestreo para equilibrar la distribución de clases, pero el algoritmo era escandalosamente lento y arrojó además peores resultados que con submuestreo, es por eso éste método es el único que comparo de los incluidos en KNIME.
+
+\img{downsample}{0.6}
+
+He configurado el nodo para tomar equilibrar las dos clases de forma exacta, conservando todos los ejemplos positivos y muestreando con una distribución uniforme los ejemplos negativos.
+
+En la sección de contenido adicional analizaremos otros dos algoritmos que implementé para selección de instancias.
+
+\subsubsection{Resultados en los algoritmos}
+
+\img{downres}{1.2}
+
+En este caso, únicamente son Adaboost y KNN los que obtienen mejores resultados en $AUC$ pero sin embargo, el valor para la medida $F1$ mejora en todos, esto no es sorpresa, pues mientras que AUC es una medida sobre la totalidad de la muestra, $F1$ es una medida parcial que evalua cómo de bien clasificamos los casos positivos, al estimular la predicción de noticias \textit{populares} incentivamos también la incorrecta clasificación de noticias que en realidad eran \textit{no populares}, sin embargo a la luz de los datos parece que la mejora en $F1$ es significativamente mayor que el peor rendimiento para $AUC$.
+
+\img{downres2}{1.2}
+
+\section{Interpretación de resultados}
+
+\img{Res1}{1.2}
+
+Lo primero que observamos es que tenemos tres candidatos para el primer puesto de calidad similar, \textbf{Gradient Boosted [N+I+D]}, \textbf{Random Forest [N+I+D]} y \textbf{MLP [N+I+D]}, los tres ofrecen un buen rendimiento tanto para la medida del área como para \textit{F1-score}, las dos medidas que hemos tomado como referencia como ya comentamos por las características particulares de nuestro problema, asimismo ofrecen sus resultados están entre los mejores para \textit{Gmean} y \textit{Gmeasure}, indicadores también de la bondad del modelo como analizamos en su apartado. 
+
+El hecho de que los tres arrojen resultados similares ---perteneciendo a familiar dispares--- parece indicar que estamos agotando la capacidad predictiva para estos datos para la tecnologías que estamos utilizando, y que las mejoras, previsiblemente poco sustanciales se derivarán o bien de mejoras triviales, como aumentar el número de iteraciones en MLP y Gradient Boosted, o aumentar el número de árboles en Random Forest y Gradient Boosted; o por el contrario, de la aplicación de algoritmos sobre los datos como selección de instancias, posteriormente, en el siguiente epígrafe veremos algunas de estas estrategias.
+
+Ninguno de los algoritmos con mejor resultado tienen una interpretación fácil o inmediata, podemos sin embargo utilizar analizar cómo correlaciona la confianza para la clase positiva con cada una de las variables de forma independiente a fin de hacernos una idea aproximada de qué está aprendiendo cada unos de los algoritmos.
+
+\img{results_analysis}{0.5}
+
+Vemos, a la luz de esta tabla como los tres algoritmos parecen coincidir de forma general ---salvo contadas excepciones con qué variables son más determinantes para clasificar una instancia en una clase u otra. Hay algunas observaciones más evidentes y otras más sorprendentes. En la linea de la primera categoría ---evidentes---, parece que los domingos y los sábados son un buen día para estimular la popularidad, cabe pensar que en los días de descanso ---fin de semana--- la gente tiene más tiempo para compartir noticias, también que los artículos de la categoría \textit{Social Media} se estiman como más populares, de la misma forma que \textit{World} y \textit{Entertainment} tienen menos feedback por parte del público; o que la subjetividad del artículo despierta más interés en el público a la hora de compartir. Sin embargo, otras menos evidentes es que la medida \textit{kw\_min\_avg} ---el artículo con la etiqueta media menos compartido--- se estima que correlaciona positivamente con la popularidad, esto tiene sentido, si de todas las etiquetas que tiene una noticia, nos quedamos con la compartida un número de veces medio, y todos los artículos con esa etiqueta han sido compartidos un número alto de veces, cabe pensar que esta noticia suscitará el mismo interés; una variable al respecto de la cual no se ponen de acuerdo los algoritmos en importancia es el número de palabras claves, todos estiman que a mayor número mayor probabilidad de popularidad, pero sin embargo, MLP lo estima de una forma más significativa que el resto; finalmente, parece que la variable más potente para estimar la popularidad de una noticia es la cercanía máxima a la tercera categoría extraida mediante \textit{LDA}, pero no conocemos su significado concreto, mientras que las otras tres que pasaron el filtro de correlación y varianza no parecen demasiado significativas. Si bien este análisis es interesante no podemos ver la correlación cruzada entre dos variables y la predicción de salida, lo cual parece determinante a la hora de clasificar las noticias, pues como vimos en el primer apartado con el gráfico de coordenadas paralelas, no parece un problema linealmente separable, que se pueda expresar como combinación lineal de las características de entrada.
+
+% Sin eliminación de características (Varianza / Correlación)
+Es interesante ver, como comentábamos al principio de este trabajo, qué sacrificio cuantitativo hemos realizado al aplicar los filtros iniciales de correlación y baja varianza, vamos a analizar los tres algoritmos con mejor resultado sobre el conjunto completo de las características.
+
+\img{all}{1.2}
+
+Más adelante podemos verlos junto al resto en la lista completa de resultados, pero ahora observamos, tal y como esperaba, que los resultados son mejores, pero lo interesante es ver que la ganancia en los tres casos, comparando el area bajo la curva es similar, lo que nos da una idea aproximada del sacrificio que hemos hecho durante el experimento a fin de agilizar el proceso. Cabe esperar que la ganancia sobre el resto de algoritmos sea similiar a la luz de estos resultados, especialmente al ver cómo las tres familias de algoritmos ---arboles con boosting, arboles con bagging y redes neuronales--- experimentan una ganancia similar al ser entrenados con el conjunto completo de datos.
+
+Una prueba que no he hecho en esta práctica es aplicar \textit{Principal Component Analysis} a fin de reducir la dimensionalidad del problema, idealmente conservando toda nuestra capacidad predictiva. El motivo de esto es conservar la interpretabilidad de los resultados a fin de responder a éste el último apartado de la práctica. Otro preprocesado que me habría gustado tener oportunidad de probar era la discretización de las variables, pero las dos opciones que vi que me ofrecía KNIME ---discretización por igual frecuencia o igual amplitud--- en experimentaciones preliminares vi que producían sistemáticamente peores resultados, tanto antes como después del equilibrado de datos, es posible que estas estrategias tan ingenuas no sean capaz de representar la naturaleza de los datos con suficiente capacidad expresiva.
+
+\section{Contenido adicional}
+
+\subsection{Condensed Nearest Neighbor (CNN)}
+
+Implementé el algoritmo CNN a través de la extensión de Python pero el problema resultó ser que el \textit{parser} de KNIME que comunica los dos lenguajes se congela para aproximadamente más de 2000 instancias, así que para las 30000 que recibía 5CV en cada iteración el algoritmo no era capaz de arrojar ningún resultado, y evaluarlo sobre una muestra aleatoria de menos de 2000 instancias parecía un intento absurdo si lo que intentamos es medir la calidad del método. Ya tendremos ocasión de experimentar con este algoritmo en la siguiente práctica.
+
+\subsection{Smart instance selection}
+
+\img{smart}{1}
+
+Ante el fracaso del algoritmo anterior implementé en KNIME mi propio algoritmo de selección de instancias ---muy ingenuo--- intentando conseguir así clasificar mejor el problema. El procedimiento es sencillo, Realizo en 10 iteraciones un sampleo aleatorio, del 50\% de las instancias, entreno C4.5 con éstas y evaluo sobre la totalidad de la muestra, finalmente calculo para cada instancia la media del AUC para todos los modelos en los que ha participado como entrenamiento, las ordeno por este valor y selecciono aproximadamente la mitad superior ---15000 instancias---. Finalmente tomo la totalidad de las instancias con clase positiva y sólo las mejores de la clase negativa. 
+
+\img{smart2}{0.5}
+
+Con este algoritmo conseguí seleccionar únicamente la mitad de las características, y conservar toda la capacidad predictiva, incluso mejorarla ligeramente en el caso del Random Forest, pero a mi entender, el incremente muy significativo de tiempo no va parejo al incremento en el rendimiento del sistema.
+
+\img{smart3}{1.2}
+
+\subsection{Multiclasificador}
+
+La siguiente idea fue realizar un multiclasificador, utilizando los cinco clasificadores con sus configuraciones más exitosas y que votaran la clase ganadora calculando la media de las confianzas.
+
+\img{multi1}{0.5}
+
+Sin embargo, los resultados, como veremos en la tabla final no conseguían ser mejores que el mejor de los 5. El valor para el área es competitivo pero la votación lo único que consigue es premiar a la clase dominante, disminuyendo el valor para $F1$, pues si uno ha sido capaz de estimar correctamente que pertenece a la clase positiva el resto de votos tienden a ahogarlo.
+
+\subsection{Pesos no uniformes en la matriz de confusión}
+
+\img{weigth1}{0.5}
+
+La siguiente idea fue utilizar pesos no uniformes en la matriz de confusión en vez de realizar \textit{downsample} para compensar el tamaño desigual de las clases, dándole proporcionalmente más peso a los errores para la clase negativa ---instancias realmente negativas clasificadas como positivas--- que a las contrarias, así remediamos la ventaja de los algoritmos al beneficiar a la clase dominante. Sin embargo, el rendimiento para mi sorpresa fue significativamente peor que en los casos con \textit{downsample} como estrategia de balanceo. El algoritmo de aprendizaje que subyacía era MLP con los mismo parámetros que en su versión regular.
+
+\img{weigth}{1.2}
+
+\section{Tabla con todos los resultados}
+
+\img{final}{1.2}
+
+\newpage
+
+\section{Bibliografía}
+% A Proactive Intelligent Decision Support System for Predicting the Popularity of Online News
+\begin{enumerate}
+\item FERNANDES, Kelwin. (2015). A Proactive Intelligent Decision Support System for Predicting the Popularity of Online News. 10.1007/978-3-319-23485-4\_53. Accedido el 4 de Noviembre, \url{https://pdfs.semanticscholar.org/ad7f/3da7a5d6a1e18cc5a176f18f52687b912fea.pdf}
+
+\item BLEI, David M., NG, Andrew Y., and JORDAN, Michael I. (2003). Latent dirichlet allocation. J. Mach. Learn. Res. 3 (March 2003), 993-1022. Accedido el 4 de Noviembre, \url{https://ai.stanford.edu/~ang/papers/nips01-lda.pdf}
+
+
+\end{enumerate}
+
+
+\section{Apéndice}
+\subsection{Estadísticas datos}
+\label{subsec:stats}
+\img{stat}{1}
+
+\img{stat2}{1}
+
+\subsection{Matriz de correlación}
+\label{subsec:corr}
+\img{corr}{1}
+
+\end{document}

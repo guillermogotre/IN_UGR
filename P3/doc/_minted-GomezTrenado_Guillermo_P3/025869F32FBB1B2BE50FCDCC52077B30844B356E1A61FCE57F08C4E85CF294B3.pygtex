@@ -1,0 +1,28 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8}]
+\PYG{c+c1}{\PYGZsh{} String to Python datetime}
+\PYG{k}{def} \PYG{n+nf}{parsed}\PYG{p}{(}\PYG{n}{x}\PYG{p}{):}
+  \PYG{n}{TIME\PYGZus{}STR} \PYG{o}{=} \PYG{l+s+s1}{\PYGZsq{}\PYGZpc{}Y\PYGZhy{}\PYGZpc{}m\PYGZhy{}}\PYG{l+s+si}{\PYGZpc{}d}\PYG{l+s+s1}{\PYGZsq{}}
+  \PYG{k}{return} \PYG{n}{datetime}\PYG{o}{.}\PYG{n}{datetime}\PYG{o}{.}\PYG{n}{strptime}\PYG{p}{(}\PYG{n}{x}\PYG{p}{,} \PYG{n}{TIME\PYGZus{}STR}\PYG{p}{)}
+
+\PYG{c+c1}{\PYGZsh{} Days from 2002\PYGZhy{}10\PYGZhy{}14 (Precomputed)}
+\PYG{k}{def} \PYG{n+nf}{getDays}\PYG{p}{(}\PYG{n}{date\PYGZus{}c}\PYG{p}{,}\PYG{n}{min\PYGZus{}date}\PYG{o}{=}\PYG{n}{parsed}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}2002\PYGZhy{}10\PYGZhy{}14\PYGZsq{}}\PYG{p}{)):}
+  \PYG{c+c1}{\PYGZsh{} Si queremos calular la fecha en vivo}
+  \PYG{k}{if} \PYG{n}{min\PYGZus{}date} \PYG{o+ow}{is} \PYG{n+nb+bp}{None}\PYG{p}{:}
+      \PYG{n}{min\PYGZus{}date} \PYG{o}{=} \PYG{n}{parsed}\PYG{p}{(}\PYG{n}{date\PYGZus{}c}\PYG{o}{.}\PYG{n}{min}\PYG{p}{())}
+  \PYG{n}{days} \PYG{o}{=} \PYG{p}{[(}\PYG{n}{parsed}\PYG{p}{(}\PYG{n}{d}\PYG{p}{)} \PYG{o}{\PYGZhy{}} \PYG{n}{min\PYGZus{}date}\PYG{p}{)}\PYG{o}{.}\PYG{n}{days} \PYG{k}{for} \PYG{n}{d} \PYG{o+ow}{in} \PYG{n}{date\PYGZus{}c}\PYG{p}{]}
+  \PYG{k}{return} \PYG{n}{days}
+
+\PYG{c+c1}{\PYGZsh{} Month of the year (1\PYGZhy{}12)}
+\PYG{k}{def} \PYG{n+nf}{getMonth}\PYG{p}{(}\PYG{n}{date\PYGZus{}c}\PYG{p}{):}
+  \PYG{n}{months} \PYG{o}{=} \PYG{p}{[}\PYG{n}{parsed}\PYG{p}{(}\PYG{n}{d}\PYG{p}{)}\PYG{o}{.}\PYG{n}{month} \PYG{k}{for} \PYG{n}{d} \PYG{o+ow}{in} \PYG{n}{date\PYGZus{}c}\PYG{p}{]}
+  \PYG{k}{return} \PYG{n}{months}
+
+\PYG{c+c1}{\PYGZsh{} Add new columns}
+\PYG{k}{def} \PYG{n+nf}{addDatesPrep}\PYG{p}{(}\PYG{n}{data}\PYG{p}{):}
+  \PYG{c+c1}{\PYGZsh{} Obtenemos la columna de fecha}
+  \PYG{n}{days} \PYG{o}{=} \PYG{n}{getDays}\PYG{p}{(}\PYG{n}{data}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}date\PYGZus{}recorded\PYGZsq{}}\PYG{p}{])}
+  \PYG{c+c1}{\PYGZsh{} Aniadimos dias desde la referencia}
+  \PYG{n}{data}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}days\PYGZus{}ellapsed\PYGZsq{}}\PYG{p}{]} \PYG{o}{=} \PYG{n}{days}
+  \PYG{c+c1}{\PYGZsh{} Aniadimos mes del año}
+  \PYG{n}{data}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}month\PYGZus{}n\PYGZsq{}}\PYG{p}{]} \PYG{o}{=} \PYG{n}{getMonth}\PYG{p}{(}\PYG{n}{data}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}date\PYGZus{}recorded\PYGZsq{}}\PYG{p}{])}
+\end{Verbatim}

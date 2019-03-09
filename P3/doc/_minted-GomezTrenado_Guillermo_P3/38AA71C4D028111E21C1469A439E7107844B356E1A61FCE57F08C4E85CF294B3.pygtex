@@ -1,0 +1,22 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8}]
+\PYG{k}{def} \PYG{n+nf}{cleanNoise}\PYG{p}{(}\PYG{n}{modelo}\PYG{p}{,}\PYG{n}{X}\PYG{p}{,}\PYG{n}{y}\PYG{p}{):}
+  \PYG{c+c1}{\PYGZsh{} 5fold CV}
+  \PYG{n}{cv} \PYG{o}{=} \PYG{n}{StratifiedKFold}\PYG{p}{(}\PYG{n}{n\PYGZus{}splits}\PYG{o}{=}\PYG{l+m+mi}{5}\PYG{p}{,} \PYG{n}{shuffle}\PYG{o}{=}\PYG{n+nb+bp}{True}\PYG{p}{,} \PYG{n}{random\PYGZus{}state}\PYG{o}{=}\PYG{l+m+mi}{123456}\PYG{p}{)}
+  \PYG{c+c1}{\PYGZsh{} Matriz de clasificación}
+  \PYG{n}{corr} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{zeros}\PYG{p}{((}\PYG{n}{X}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{],}\PYG{l+m+mi}{5}\PYG{p}{),}\PYG{n}{dtype}\PYG{o}{=}\PYG{n}{np}\PYG{o}{.}\PYG{n}{bool}\PYG{p}{)}
+
+  \PYG{n}{i} \PYG{o}{=} \PYG{l+m+mi}{0}
+  \PYG{k}{for} \PYG{n}{train}\PYG{p}{,} \PYG{n}{test} \PYG{o+ow}{in} \PYG{n}{cv}\PYG{o}{.}\PYG{n}{split}\PYG{p}{(}\PYG{n}{X}\PYG{p}{,} \PYG{n}{y}\PYG{p}{):}
+      \PYG{c+c1}{\PYGZsh{} Entrenamos con subconjunto}
+      \PYG{n}{modelo} \PYG{o}{=} \PYG{n}{modelo}\PYG{o}{.}\PYG{n}{fit}\PYG{p}{(}\PYG{n}{X}\PYG{p}{[}\PYG{n}{train}\PYG{p}{],} \PYG{n}{y}\PYG{p}{[}\PYG{n}{train}\PYG{p}{])}
+      \PYG{c+c1}{\PYGZsh{} Evaluamos todos los datos}
+      \PYG{n}{y\PYGZus{}pred} \PYG{o}{=} \PYG{n}{modelo}\PYG{o}{.}\PYG{n}{predict}\PYG{p}{(}\PYG{n}{X}\PYG{p}{)}
+      \PYG{c+c1}{\PYGZsh{} Añadimos la columna con los aciertos}
+      \PYG{n}{corr}\PYG{p}{[:,}\PYG{n}{i}\PYG{p}{]} \PYG{o}{=} \PYG{n}{y\PYGZus{}pred} \PYG{o}{==} \PYG{n}{y}
+      \PYG{n}{i} \PYG{o}{+=} \PYG{l+m+mi}{1}
+  \PYG{c+c1}{\PYGZsh{} Reduzco a una sola columna de booleanos}
+  \PYG{c+c1}{\PYGZsh{} donde los 0 deben ser eliminados}
+  \PYG{n}{m} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{apply\PYGZus{}along\PYGZus{}axis}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{,}\PYG{n}{axis}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{n}{arr}\PYG{o}{=}\PYG{n}{corr}\PYG{p}{)}\PYG{o}{.}\PYG{n}{astype}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{bool}\PYG{p}{)}
+
+  \PYG{k}{return} \PYG{n}{m}
+\end{Verbatim}

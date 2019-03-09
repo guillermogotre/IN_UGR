@@ -1,0 +1,41 @@
+\BOOKMARK [1][-]{section.1}{Introducci\363n}{}% 1
+\BOOKMARK [2][-]{subsection.1.1}{Propiedades de las instancias}{section.1}% 2
+\BOOKMARK [2][-]{subsection.1.2}{Caracter\355sticas de la muestra}{section.1}% 3
+\BOOKMARK [1][-]{section.2}{Resultados Obtenidos}{}% 4
+\BOOKMARK [2][-]{subsection.2.1}{Transformaciones preliminares}{section.2}% 5
+\BOOKMARK [2][-]{subsection.2.2}{Medidas de calidad y consideraciones afines}{section.2}% 6
+\BOOKMARK [1][-]{section.3}{An\341lisis de resultados}{}% 7
+\BOOKMARK [2][-]{subsection.3.1}{ONER}{section.3}% 8
+\BOOKMARK [2][-]{subsection.3.2}{Naives Bayes}{section.3}% 9
+\BOOKMARK [2][-]{subsection.3.3}{Perceptr\363n Multicapa}{section.3}% 10
+\BOOKMARK [2][-]{subsection.3.4}{C4.5}{section.3}% 11
+\BOOKMARK [2][-]{subsection.3.5}{Gradient Boosted Classifier}{section.3}% 12
+\BOOKMARK [2][-]{subsection.3.6}{Random Forest}{section.3}% 13
+\BOOKMARK [2][-]{subsection.3.7}{Adaboost}{section.3}% 14
+\BOOKMARK [2][-]{subsection.3.8}{KNN}{section.3}% 15
+\BOOKMARK [2][-]{subsection.3.9}{Resultados preliminares}{section.3}% 16
+\BOOKMARK [1][-]{section.4}{Configuraci\363n de algoritmos}{}% 17
+\BOOKMARK [2][-]{subsection.4.1}{Perceptr\363n Multicapa}{section.4}% 18
+\BOOKMARK [2][-]{subsection.4.2}{C4.5}{section.4}% 19
+\BOOKMARK [2][-]{subsection.4.3}{Gradient Boosted Classifier}{section.4}% 20
+\BOOKMARK [2][-]{subsection.4.4}{Random Forest}{section.4}% 21
+\BOOKMARK [2][-]{subsection.4.5}{Adaboost}{section.4}% 22
+\BOOKMARK [2][-]{subsection.4.6}{KNN}{section.4}% 23
+\BOOKMARK [1][-]{section.5}{Procesado de datos}{}% 24
+\BOOKMARK [2][-]{subsection.5.1}{Imputaci\363n de datos y CVCF}{section.5}% 25
+\BOOKMARK [3][-]{subsubsection.5.1.1}{Imputaci\363n de datos}{subsection.5.1}% 26
+\BOOKMARK [3][-]{subsubsection.5.1.2}{Cross-Validated Committees Filter \(CVCF\)}{subsection.5.1}% 27
+\BOOKMARK [3][-]{subsubsection.5.1.3}{Resultados en los algoritmos}{subsection.5.1}% 28
+\BOOKMARK [2][-]{subsection.5.2}{Submuestreo}{section.5}% 29
+\BOOKMARK [3][-]{subsubsection.5.2.1}{Resultados en los algoritmos}{subsection.5.2}% 30
+\BOOKMARK [1][-]{section.6}{Interpretaci\363n de resultados}{}% 31
+\BOOKMARK [1][-]{section.7}{Contenido adicional}{}% 32
+\BOOKMARK [2][-]{subsection.7.1}{Condensed Nearest Neighbor \(CNN\)}{section.7}% 33
+\BOOKMARK [2][-]{subsection.7.2}{Smart instance selection}{section.7}% 34
+\BOOKMARK [2][-]{subsection.7.3}{Multiclasificador}{section.7}% 35
+\BOOKMARK [2][-]{subsection.7.4}{Pesos no uniformes en la matriz de confusi\363n}{section.7}% 36
+\BOOKMARK [1][-]{section.8}{Tabla con todos los resultados}{}% 37
+\BOOKMARK [1][-]{section.9}{Bibliograf\355a}{}% 38
+\BOOKMARK [1][-]{section.10}{Ap\351ndice}{}% 39
+\BOOKMARK [2][-]{subsection.10.1}{Estad\355sticas datos}{section.10}% 40
+\BOOKMARK [2][-]{subsection.10.2}{Matriz de correlaci\363n}{section.10}% 41

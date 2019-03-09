@@ -1,0 +1,19 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8}]
+\PYG{k}{def} \PYG{n+nf}{ordenateCategories}\PYG{p}{(}\PYG{n}{tr}\PYG{p}{,}\PYG{n}{tst}\PYG{p}{,}\PYG{n}{y}\PYG{p}{):}
+  \PYG{c+c1}{\PYGZsh{} Obtenemos las columnas categóricas}
+  \PYG{n}{keys} \PYG{o}{=} \PYG{n+nb}{list}\PYG{p}{(}\PYG{n+nb}{filter}\PYG{p}{(}\PYG{k}{lambda} \PYG{n}{x}\PYG{p}{:} \PYG{n}{tr}\PYG{p}{[}\PYG{n}{x}\PYG{p}{]}\PYG{o}{.}\PYG{n}{dtype} \PYG{o}{==} \PYG{n}{np}\PYG{o}{.}\PYG{n}{dtype}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}O\PYGZsq{}}\PYG{p}{),} \PYG{n}{tr}\PYG{o}{.}\PYG{n}{columns}\PYG{p}{))}
+  \PYG{c+c1}{\PYGZsh{} Por cada columna}
+  \PYG{k}{for} \PYG{n}{k} \PYG{o+ow}{in} \PYG{n}{keys}\PYG{p}{:}
+      \PYG{c+c1}{\PYGZsh{} Obtenemos los valores distintos sobre el train}
+      \PYG{n}{vals} \PYG{o}{=} \PYG{n+nb}{list}\PYG{p}{(}\PYG{n}{Counter}\PYG{p}{(}\PYG{n}{tr}\PYG{p}{[}\PYG{n}{k}\PYG{p}{]}\PYG{o}{.}\PYG{n}{values}\PYG{o}{.}\PYG{n}{reshape}\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{)))}
+      \PYG{c+c1}{\PYGZsh{} Los ordenamos por su porcentaje de clasificacion como funcionales}
+      \PYG{n}{impV} \PYG{o}{=} \PYG{n+nb}{sorted}\PYG{p}{(}\PYG{n+nb}{map}\PYG{p}{(}
+          \PYG{k}{lambda} \PYG{n}{x}\PYG{p}{:} \PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{((}\PYG{n}{y}\PYG{p}{[}\PYG{n}{tr}\PYG{p}{[}\PYG{n}{k}\PYG{p}{]} \PYG{o}{==} \PYG{n}{x}\PYG{p}{]} \PYG{o}{==} \PYG{l+s+s1}{\PYGZsq{}functional\PYGZsq{}}\PYG{p}{)}\PYG{o}{.}\PYG{n}{values}\PYG{p}{)} \PYG{o}{/} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{((}\PYG{n}{tr}\PYG{p}{[}\PYG{n}{k}\PYG{p}{]} \PYG{o}{==} \PYG{n}{x}\PYG{p}{)}\PYG{o}{.}\PYG{n}{values}\PYG{p}{),} \PYG{n}{x}\PYG{p}{),}\PYG{n}{vals}\PYG{p}{),}\PYG{n}{reverse}\PYG{o}{=}\PYG{n+nb+bp}{True}\PYG{p}{)}
+      \PYG{c+c1}{\PYGZsh{} Creamos un diccionario asignando un índice según su posición}
+      \PYG{n}{d} \PYG{o}{=} \PYG{n+nb}{dict}\PYG{p}{(}\PYG{n+nb}{map}\PYG{p}{(}\PYG{k}{lambda} \PYG{n}{x}\PYG{p}{:} \PYG{p}{(}\PYG{n}{x}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{][}\PYG{l+m+mi}{1}\PYG{p}{],} \PYG{n}{x}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]),} \PYG{n+nb}{enumerate}\PYG{p}{(}\PYG{n}{impV}\PYG{p}{)))}
+
+      \PYG{c+c1}{\PYGZsh{} Modificamos train}
+      \PYG{n}{tr}\PYG{p}{[}\PYG{n}{k}\PYG{p}{]} \PYG{o}{=} \PYG{n+nb}{list}\PYG{p}{(}\PYG{n+nb}{map}\PYG{p}{(}\PYG{k}{lambda} \PYG{n}{x}\PYG{p}{:} \PYG{n}{d}\PYG{o}{.}\PYG{n}{get}\PYG{p}{(}\PYG{n}{x}\PYG{p}{,}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{),}\PYG{n}{tr}\PYG{p}{[}\PYG{n}{k}\PYG{p}{]}\PYG{o}{.}\PYG{n}{values}\PYG{p}{))}
+      \PYG{c+c1}{\PYGZsh{} Modificamos test}
+      \PYG{n}{tst}\PYG{p}{[}\PYG{n}{k}\PYG{p}{]} \PYG{o}{=} \PYG{n+nb}{list}\PYG{p}{(}\PYG{n+nb}{map}\PYG{p}{(}\PYG{k}{lambda} \PYG{n}{x}\PYG{p}{:} \PYG{n}{d}\PYG{o}{.}\PYG{n}{get}\PYG{p}{(}\PYG{n}{x}\PYG{p}{,}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{),}\PYG{n}{tst}\PYG{p}{[}\PYG{n}{k}\PYG{p}{]}\PYG{o}{.}\PYG{n}{values}\PYG{p}{))}
+\end{Verbatim}

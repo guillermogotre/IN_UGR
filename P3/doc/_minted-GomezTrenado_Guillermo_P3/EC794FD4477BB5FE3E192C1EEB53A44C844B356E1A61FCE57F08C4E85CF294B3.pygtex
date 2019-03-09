@@ -1,0 +1,66 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8}]
+\PYG{c+c1}{\PYGZsh{} Obtener Accuracy ponderada}
+\PYG{n}{getAcc} \PYG{o}{=} \PYG{k}{lambda} \PYG{n}{x}\PYG{p}{,}\PYG{n}{y}\PYG{p}{:} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{where}\PYG{p}{(}\PYG{n}{x} \PYG{o}{==} \PYG{n}{np}\PYG{o}{.}\PYG{n}{repeat}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{max}\PYG{p}{(}\PYG{n}{x}\PYG{p}{,}\PYG{n}{axis}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{),}\PYG{l+m+mi}{3}\PYG{p}{,}\PYG{n}{axis}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{)}\PYG{o}{.}\PYG{n}{reshape}\PYG{p}{((}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{l+m+mi}{3}\PYG{p}{)))[}\PYG{l+m+mi}{1}\PYG{p}{]} \PYG{o}{==} \PYG{n}{y}\PYG{p}{)}\PYG{o}{/}\PYG{n}{y}\PYG{o}{.}\PYG{n}{size}
+\PYG{c+c1}{\PYGZsh{} Obtener lista de índices}
+\PYG{n}{getYIdx} \PYG{o}{=} \PYG{k}{lambda} \PYG{n}{x}\PYG{p}{:} \PYG{n}{np}\PYG{o}{.}\PYG{n}{where}\PYG{p}{(}\PYG{n}{x} \PYG{o}{==} \PYG{n}{np}\PYG{o}{.}\PYG{n}{repeat}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{max}\PYG{p}{(}\PYG{n}{x}\PYG{p}{,}\PYG{n}{axis}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{),}\PYG{l+m+mi}{3}\PYG{p}{,}\PYG{n}{axis}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{)}\PYG{o}{.}\PYG{n}{reshape}\PYG{p}{((}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{l+m+mi}{3}\PYG{p}{)))[}\PYG{l+m+mi}{1}\PYG{p}{]}
+\PYG{c+c1}{\PYGZsh{} Ponderar las probabilidades para cada matriz n\PYGZus{}clasificadores x n\PYGZus{}instancias}
+\PYG{n}{pond} \PYG{o}{=} \PYG{k}{lambda} \PYG{n}{y}\PYG{p}{,}\PYG{n}{pw}\PYG{p}{,}\PYG{n}{fc}\PYG{p}{:} \PYG{n}{np}\PYG{o}{.}\PYG{n}{power}\PYG{p}{(}\PYG{n}{y}\PYG{p}{,} \PYG{n}{np}\PYG{o}{.}\PYG{n}{repeat}\PYG{p}{(}\PYG{n}{pw}\PYG{p}{,} \PYG{n}{y}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{])}\PYG{o}{.}\PYG{n}{reshape}\PYG{p}{((}\PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{pw}\PYG{p}{),} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{))}\PYG{o}{.}\PYG{n}{transpose}\PYG{p}{())}\PYG{o}{*}\PYG{n}{np}\PYG{o}{.}\PYG{n}{repeat}\PYG{p}{(}\PYG{n}{fc}\PYG{p}{,}  \PYG{n}{y}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{])}\PYG{o}{.}\PYG{n}{reshape}\PYG{p}{((}\PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{fc}\PYG{p}{),} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{))}\PYG{o}{.}\PYG{n}{transpose}\PYG{p}{()}
+
+
+\PYG{c+c1}{\PYGZsh{} Accuracy ponderado con etiquetas codificadas entre 0 y 2}
+\PYG{k}{def} \PYG{n+nf}{getPondAcc}\PYG{p}{(}\PYG{n}{prob}\PYG{p}{,}\PYG{n}{y}\PYG{p}{,}\PYG{n}{pw}\PYG{p}{,}\PYG{n}{fc}\PYG{p}{):}
+  \PYG{n}{z} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{zeros}\PYG{p}{(}\PYG{n}{prob}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{)}
+  \PYG{c+c1}{\PYGZsh{} Lo aplico a cada matriz n\PYGZus{}clasificadores x n\PYGZus{}instancias por no hacer más ilegible el código}
+  \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n}{prob}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]):}
+      \PYG{n}{z}\PYG{p}{[:,} \PYG{n}{i}\PYG{p}{,} \PYG{p}{:]} \PYG{o}{=} \PYG{n}{pond}\PYG{p}{(}\PYG{n}{prob}\PYG{p}{[:,} \PYG{n}{i}\PYG{p}{,} \PYG{p}{:],} \PYG{n}{pw}\PYG{p}{,} \PYG{n}{fc}\PYG{p}{)}
+  \PYG{k}{return} \PYG{n}{getAcc}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{(}\PYG{n}{z}\PYG{p}{,}\PYG{n}{axis}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{p}{),}\PYG{n}{y}\PYG{p}{)}
+
+\PYG{c+c1}{\PYGZsh{} Accuracy ponderado con etiquetas de texto}
+\PYG{k}{def} \PYG{n+nf}{getPondAcc\PYGZus{}text}\PYG{p}{(}\PYG{n}{prob}\PYG{p}{,}\PYG{n}{y}\PYG{p}{,}\PYG{n}{v}\PYG{p}{):}
+  \PYG{n}{pred\PYGZus{}y} \PYG{o}{=} \PYG{n}{getPondRes}\PYG{p}{(}\PYG{n}{prob}\PYG{p}{,}\PYG{n}{v}\PYG{p}{)}
+  \PYG{k}{return} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{(}\PYG{n}{pred\PYGZus{}y} \PYG{o}{==} \PYG{n}{y}\PYG{p}{)}\PYG{o}{/}\PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{y}\PYG{p}{)}
+
+\PYG{c+c1}{\PYGZsh{} Predicción ponderada para aplicar al test}
+\PYG{k}{def} \PYG{n+nf}{getPondRes}\PYG{p}{(}\PYG{n}{prob}\PYG{p}{,}\PYG{n}{v}\PYG{p}{):}
+  \PYG{n}{k} \PYG{o}{=} \PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}functional\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}functional needs repair\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}non functional\PYGZsq{}}\PYG{p}{]}
+
+  \PYG{c+c1}{\PYGZsh{} Obtenemos las probabilidades modificadas}
+  \PYG{n}{z} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{zeros}\PYG{p}{(}\PYG{n}{prob}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{)}
+  \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n}{prob}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]):}
+      \PYG{n}{z}\PYG{p}{[:,} \PYG{n}{i}\PYG{p}{,} \PYG{p}{:]} \PYG{o}{=} \PYG{n}{pond}\PYG{p}{(}\PYG{n}{prob}\PYG{p}{[:,} \PYG{n}{i}\PYG{p}{,} \PYG{p}{:],} \PYG{n}{v}\PYG{p}{[:}\PYG{l+m+mi}{3}\PYG{p}{],} \PYG{n}{v}\PYG{p}{[}\PYG{l+m+mi}{3}\PYG{p}{:])}
+  \PYG{c+c1}{\PYGZsh{} Obtenemos los índices de las etiquetas más votadas}
+  \PYG{n}{y\PYGZus{}pred} \PYG{o}{=} \PYG{n}{getYIdx}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{(}\PYG{n}{z}\PYG{p}{,} \PYG{n}{axis}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{p}{))}
+  \PYG{c+c1}{\PYGZsh{} Transformamos a etiquetas de texto}
+  \PYG{n}{y\PYGZus{}pred\PYGZus{}lab} \PYG{o}{=} \PYG{p}{[}\PYG{n}{k}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]} \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n}{y\PYGZus{}pred}\PYG{p}{]}
+
+  \PYG{k}{return} \PYG{n}{y\PYGZus{}pred\PYGZus{}lab}
+
+
+\PYG{k+kn}{from} \PYG{n+nn}{scipy.optimize} \PYG{k+kn}{import} \PYG{n}{differential\PYGZus{}evolution}
+
+\PYG{c+c1}{\PYGZsh{} Aplica DE para obtener la mejor configuración}
+\PYG{k}{def} \PYG{n+nf}{bestWeight}\PYG{p}{(}\PYG{n}{prob\PYGZus{}all}\PYG{p}{,} \PYG{n}{y}\PYG{p}{):}
+  \PYG{c+c1}{\PYGZsh{} Transformamos la clase a numérica}
+  \PYG{n}{k} \PYG{o}{=} \PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}functional\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}functional needs repair\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}non functional\PYGZsq{}}\PYG{p}{]}
+  \PYG{n}{y\PYGZus{}n} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{zeros}\PYG{p}{(}\PYG{n}{y}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{)}
+  \PYG{k}{for} \PYG{n}{i}\PYG{p}{,} \PYG{n}{ke} \PYG{o+ow}{in} \PYG{n+nb}{enumerate}\PYG{p}{(}\PYG{n}{k}\PYG{p}{):}
+      \PYG{n}{y\PYGZus{}n}\PYG{p}{[}\PYG{n}{y} \PYG{o}{==} \PYG{n}{ke}\PYG{p}{]} \PYG{o}{=} \PYG{n}{i}
+
+  \PYG{c+c1}{\PYGZsh{} Evaluación candidato}
+  \PYG{k}{def} \PYG{n+nf}{eval\PYGZus{}cad}\PYG{p}{(}\PYG{n}{v}\PYG{p}{):}
+      \PYG{n}{nonlocal} \PYG{n}{prob\PYGZus{}all}\PYG{p}{,} \PYG{n}{y\PYGZus{}n}
+      \PYG{c+c1}{\PYGZsh{}v[:3] = potencias, v[3:] = ponderación}
+      \PYG{k}{return} \PYG{n}{getPondAcc}\PYG{p}{(}\PYG{n}{prob\PYGZus{}all}\PYG{p}{,} \PYG{n}{y\PYGZus{}n}\PYG{p}{,} \PYG{n}{v}\PYG{p}{[:}\PYG{l+m+mi}{3}\PYG{p}{],} \PYG{n}{v}\PYG{p}{[}\PYG{l+m+mi}{3}\PYG{p}{:])}
+
+  \PYG{n}{de} \PYG{o}{=} \PYG{n}{differential\PYGZus{}evolution}\PYG{p}{(}
+      \PYG{c+c1}{\PYGZsh{} Como el algoritmo minimiza una función multiplicamos por \PYGZhy{}1 el valor de ajuste}
+      \PYG{k}{lambda} \PYG{n}{x}\PYG{p}{:} \PYG{o}{\PYGZhy{}}\PYG{n}{eval\PYGZus{}cad}\PYG{p}{(}\PYG{n}{x}\PYG{p}{),}
+      \PYG{p}{[(}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{l+m+mi}{10}\PYG{p}{)]}\PYG{o}{*}\PYG{l+m+mi}{3}\PYG{o}{+}\PYG{p}{[(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{10}\PYG{p}{)]}\PYG{o}{*}\PYG{l+m+mi}{3}\PYG{p}{,}
+      \PYG{c+c1}{\PYGZsh{} El que mejor resultado arroja}
+      \PYG{n}{strategy}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}rand1exp\PYGZsq{}}\PYG{p}{,}
+      \PYG{c+c1}{\PYGZsh{} Defino las iteraciones máximas a 100 aunque he comprobado que no las consume}
+      \PYG{n}{maxiter}\PYG{o}{=}\PYG{l+m+mi}{100}
+  \PYG{p}{)}
+  \PYG{c+c1}{\PYGZsh{}Devolvemos el ajuste y la configuración que lo logra}
+  \PYG{k}{return} \PYG{o}{\PYGZhy{}}\PYG{n}{de}\PYG{o}{.}\PYG{n}{fun}\PYG{p}{,} \PYG{n}{de}\PYG{o}{.}\PYG{n}{x}
+\end{Verbatim}

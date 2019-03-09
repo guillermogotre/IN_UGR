@@ -1,0 +1,48 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8}]
+\PYG{k}{class} \PYG{n+nc}{CustomClassifier}\PYG{p}{:}
+  \PYG{n}{clfs} \PYG{o}{=} \PYG{p}{[]}
+  \PYG{k}{def} \PYG{n+nf+fm}{\PYGZus{}\PYGZus{}init\PYGZus{}\PYGZus{}}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{p}{,}\PYG{o}{*}\PYG{n}{clf}\PYG{p}{):}
+      \PYG{c+c1}{\PYGZsh{} Creamos la lista de clasificadores}
+      \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{clfs} \PYG{o}{=} \PYG{n}{clf}
+
+  \PYG{c+c1}{\PYGZsh{} fit: Entrenamos cada clasificador por separado}
+  \PYG{k}{def} \PYG{n+nf}{fit}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{p}{,}\PYG{n}{X}\PYG{p}{,}\PYG{n}{y}\PYG{p}{):}
+      \PYG{k}{for} \PYG{n}{clf} \PYG{o+ow}{in} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{clfs}\PYG{p}{:}
+          \PYG{n}{clf}\PYG{o}{.}\PYG{n}{fit}\PYG{p}{(}\PYG{n}{X}\PYG{p}{,}\PYG{n}{y}\PYG{p}{)}
+      \PYG{k}{return} \PYG{n+nb+bp}{self}
+  \PYG{c+c1}{\PYGZsh{} predict: Obtenemos el máximo de la suma de las probabilidades}
+  \PYG{k}{def} \PYG{n+nf}{predict}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{p}{,}\PYG{n}{X}\PYG{p}{,}\PYG{n}{return\PYGZus{}prob}\PYG{o}{=}\PYG{n+nb+bp}{False}\PYG{p}{):}
+      \PYG{c+c1}{\PYGZsh{} Obtenemos las predicciones individuales}
+      \PYG{n}{res} \PYG{o}{=} \PYG{p}{[}\PYG{n}{clf}\PYG{o}{.}\PYG{n}{predict\PYGZus{}proba}\PYG{p}{(}\PYG{n}{X}\PYG{p}{)} \PYG{k}{for} \PYG{n}{clf} \PYG{o+ow}{in} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{clfs}\PYG{p}{]}
+      \PYG{c+c1}{\PYGZsh{} Obtenemos la lista de etiquetas}
+      \PYG{n}{k} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{clfs}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{o}{.}\PYG{n}{classes\PYGZus{}}
+
+      \PYG{c+c1}{\PYGZsh{} Definimos una matriz vacía}
+      \PYG{n}{z} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{zeros}\PYG{p}{(}\PYG{n}{res}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{)}
+      \PYG{c+c1}{\PYGZsh{} Sumamos cada probabilidad}
+      \PYG{k}{for} \PYG{n}{r} \PYG{o+ow}{in} \PYG{n}{res}\PYG{p}{:}
+          \PYG{n}{z} \PYG{o}{+=} \PYG{n}{r}
+
+      \PYG{c+c1}{\PYGZsh{} Tomamos el índice de la etiqueta más probable}
+      \PYG{n}{pos} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{apply\PYGZus{}along\PYGZus{}axis}\PYG{p}{(}\PYG{k}{lambda} \PYG{n}{x}\PYG{p}{:} \PYG{n}{np}\PYG{o}{.}\PYG{n}{where}\PYG{p}{(}\PYG{n}{x} \PYG{o}{==} \PYG{n}{x}\PYG{o}{.}\PYG{n}{max}\PYG{p}{()),} \PYG{n}{axis}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{arr}\PYG{o}{=}\PYG{n}{z}\PYG{p}{)}\PYG{o}{.}\PYG{n}{reshape}\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{)}
+
+      \PYG{c+c1}{\PYGZsh{} Esta es la opción original}
+      \PYG{k}{if} \PYG{o+ow}{not} \PYG{n}{return\PYGZus{}prob}\PYG{p}{:}
+          \PYG{k}{return} \PYG{n+nb}{list}\PYG{p}{(}\PYG{n+nb}{map}\PYG{p}{(}\PYG{k}{lambda} \PYG{n}{i}\PYG{p}{:} \PYG{n}{k}\PYG{p}{[}\PYG{n}{i}\PYG{p}{],} \PYG{n}{pos}\PYG{p}{))}
+      \PYG{c+c1}{\PYGZsh{} Esto se añadió posteriormente (predicción + volumen de probabilidades)}
+      \PYG{k}{else}\PYG{p}{:}
+          \PYG{k}{return} \PYG{n+nb}{list}\PYG{p}{(}\PYG{n+nb}{map}\PYG{p}{(}\PYG{k}{lambda} \PYG{n}{i}\PYG{p}{:} \PYG{n}{k}\PYG{p}{[}\PYG{n}{i}\PYG{p}{],} \PYG{n}{pos}\PYG{p}{)),} \PYG{n}{np}\PYG{o}{.}\PYG{n}{stack}\PYG{p}{(}\PYG{n}{res}\PYG{p}{,}\PYG{n}{axis}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{p}{)}
+
+  \PYG{c+c1}{\PYGZsh{} predict\PYGZus{}proba: Devolvemos el volumen de probabilidades individuales}
+  \PYG{k}{def} \PYG{n+nf}{predict\PYGZus{}proba}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{X}\PYG{p}{):}
+      \PYG{c+c1}{\PYGZsh{} Obtenemos las predicciones individuales}
+      \PYG{n}{res} \PYG{o}{=} \PYG{p}{[}\PYG{n}{clf}\PYG{o}{.}\PYG{n}{predict\PYGZus{}proba}\PYG{p}{(}\PYG{n}{X}\PYG{p}{)} \PYG{k}{for} \PYG{n}{clf} \PYG{o+ow}{in} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{clfs}\PYG{p}{]}
+
+      \PYG{c+c1}{\PYGZsh{} Definimos una matriz vacía}
+      \PYG{n}{z} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{zeros}\PYG{p}{(}\PYG{n}{res}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{)}
+      \PYG{c+c1}{\PYGZsh{} Sumamos cada probabilidad}
+      \PYG{k}{for} \PYG{n}{r} \PYG{o+ow}{in} \PYG{n}{res}\PYG{p}{:}
+          \PYG{n}{z} \PYG{o}{+=} \PYG{n}{r}
+
+      \PYG{k}{return} \PYG{n}{z}
+\end{Verbatim}

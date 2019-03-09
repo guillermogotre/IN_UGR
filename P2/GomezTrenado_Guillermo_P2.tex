@@ -1,0 +1,1030 @@
+\documentclass{article}
+% pre\'ambulo
+
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,activeacute]{babel}
+\usepackage{mathtools}
+\usepackage[utf8]{inputenc}
+\PassOptionsToPackage{hyphens}{url}\usepackage{hyperref}
+
+\expandafter\def\expandafter\UrlBreaks\expandafter{\UrlBreaks%  save the current one
+  \do\a\do\b\do\c\do\d\do\e\do\f\do\g\do\h\do\i\do\j%
+  \do\k\do\l\do\m\do\n\do\o\do\p\do\q\do\r\do\s\do\t%
+  \do\u\do\v\do\w\do\x\do\y\do\z\do\A\do\B\do\C\do\D%
+  \do\E\do\F\do\G\do\H\do\I\do\J\do\K\do\L\do\M\do\N%
+  \do\O\do\P\do\Q\do\R\do\S\do\T\do\U\do\V\do\W\do\X%
+  \do\Y\do\Z}
+
+\usepackage{listings}
+%\usepackage{listingsutf8}
+%\usepackage[spanish]{babel}
+\lstset{
+	%inputencoding=utf8/latin1,
+	literate=%
+         {á}{{\'a}}1
+         {í}{{\'i}}1
+         {é}{{\'e}}1
+         {ý}{{\'y}}1
+         {ú}{{\'u}}1
+         {ó}{{\'o}}1
+         {ě}{{\v{e}}}1
+         {š}{{\v{s}}}1
+         {č}{{\v{c}}}1
+         {ř}{{\v{r}}}1
+         {ž}{{\v{z}}}1
+         {ď}{{\v{d}}}1
+         {ť}{{\v{t}}}1
+         {ň}{{\v{n}}}1                
+         {ů}{{\r{u}}}1
+         {Á}{{\'A}}1
+         {Í}{{\'I}}1
+         {É}{{\'E}}1
+         {Ý}{{\'Y}}1
+         {Ú}{{\'U}}1
+         {Ó}{{\'O}}1
+         {Ě}{{\v{E}}}1
+         {Š}{{\v{S}}}1
+         {Č}{{\v{C}}}1
+         {Ř}{{\v{R}}}1
+         {Ž}{{\v{Z}}}1
+         {Ď}{{\v{D}}}1
+         {Ť}{{\v{T}}}1
+         {Ň}{{\v{N}}}1                
+         {Ů}{{\r{U}}}1,
+	language=bash,
+	basicstyle=\ttfamily,
+  columns=fullflexible,
+  frame=single,
+  breaklines=true,
+  postbreak=\mbox{{$\hookrightarrow$}\space},
+}
+
+\usepackage{graphicx}
+\graphicspath{ {screens/} }
+
+\PassOptionsToPackage{hyphens}{url}\usepackage[hyphens]{url}
+
+\usepackage{amssymb}
+\usepackage{stmaryrd}
+\usepackage{longtable}
+\usepackage[table,xcdraw]{xcolor}
+
+\usepackage{booktabs}
+
+% macros 
+\newcommand{\img}[2]{
+\noindent\makebox[\textwidth][c]{\includegraphics[width=#2\textwidth,]{img/#1}}%
+}
+
+\newcommand{\cfloat}[1]{
+\noindent\makebox[\textwidth][c]{#1}
+}
+
+% title
+\title{Visión por computador\\
+Práctica 2}
+
+\author{Guillermo G\'omez Trenado | 77820354-S \\
+guillermogotre@correo.ugr.es}
+
+\begin{document}
+% cuerpo del documento
+
+\maketitle
+
+\tableofcontents
+
+\newpage
+
+\section{Introducción}
+
+En esta práctica vamos a utilizar los datos demográficos publicados por el INE en 2011\footnote{\url{(http://www.ine.es/censos2011_datos/
+cen11_datos_microdatos.htm}} restringidos a la provincia de Granada, 83499 casos en total. Se incluyen 142 variables distintas por cada persona censada aunque una gran parte de estas son variables categóricas no ordinales que si bien no nos servirán para realizar \textit{clustering} sobre ellas sí nos serán de utilidad para filtrar nuestros casos de estudio.
+
+\subsection{Problema}
+
+Queremos encontrar tres subconjuntos de datos sobre los que aplicar clústering a fin de extraer alguna reflexión sobre la segmentación realizada por los algoritmos, así como analizar el rendimiento de estos en términos de eficiencia y calidad de la separación.
+
+\subsection{Consideraciones}
+
+Para la visualización de los resultados nos apoyaremos en los datos tabulados sobre cada uno de los algoritmos de clústering, aquí podremos ver el tiempo de ejecución, el número de \textit{clusters} encontrados y tres métricas: \textbf{Coeficiente \textit{silhouette}}, que relaciona la cohesión dentro de un gruo y la separación respecto al resto, con valores que van desde -1 ---los objetos están en clusteres que no les representan--- hasta 1---existe cohesión dentro del grupo y separación frente al resto---; \textbf{índice de Calinski-Harabasz}, razón entre la dispersión dentro del segmento y fuera de él, mejor cuanto mayor es el resultado; y \textbf{índice de Davies-Bouldin}, se define este índice como la media de la similaridad entre cada \textit{cluster} encontrado y su \textit{cluster} más similar a éste, cuando menor es el valor de esta métrica ---la suma de las similaridades--- mejor es la partición, siendo el mínimo 0.
+
+\subsection{Algoritmos utilizados}
+
+Para la práctica he utilizado cinco algoritmos de \textit{clustering} distintos, \textbf{K-means} donde una vez definidos el número de clusters deseados se van desplazando los centroides del clúster $k_i$ hacia el centroide de los objetos que tienen a $k_i$ como candidato más próximo hasta que se estabiliza el proceso; \textbf{Agglomerative Ward}, método aglomerativo que va uniendo en cada paso los dos clusters que resulten en la varianza mínima de cada cluster; \textbf{DBScan}, dado un radio máximo para poder ser considerado vecino y un tamaño mínimo para poder formar un clúster, al igual que el algoritmo anterior puede definir clusters no convexos; \textbf{Birch}, mantiene una estructura de árbol que va añadiendo los objetos y definiendo los elementos de los clusters a medida que entran al algoritmo, se definen el umbral o radio de pertenencia a un cluster, el factor de ramificación por cada nodo del árbol y el número de clusters ---opcional--- que si está vacío devuelve los nodos hoja como los clústers encontrados, y en caso contrario utiliza la descripción de los nodos hojas ---como un representante que funcione a modo de reducción del número de instancias--- como entrada para otro algoritmo de segmentación; y finalmete \textbf{Spectral clustering}, que transforma la tabla de objetos en una matriz cuadrada de afinidad de baja dimensionalidad y aplica posteriormente KMeans para agrupar estos datos transformados.
+
+He utilizado K-Means y Spectral clustering para el ajuste de parámetros porque tras una primera experimentación fuera del código eran los que mejor resultado daban con distintos parámetros---no es ninguna sorpresa que si K-Means daba un buen resultado, Spectral clustering también lo hiciera---.
+
+En los algoritmos que me permite elegir el número de clústers he elegido 5, para poder visualizar más eficazmente las características de éstos, aunque en el ajuste de parámetros probamos a modificar esto y aplicar otras estrategias.
+
+\section{Caso de estudio 1. Noches fuera del domicilio habitual}
+
+\subsection{Descripción subconjunto}
+
+Para este primer caso quería ver cómo el perfil de usuarios mayores de edad que pasan más noches fuera de su vivienda habitual difería de aquellos que duermen la mayoría de las noches en su casa, las dos variables de interés para el perfil son la edad y el nivel de estudios, mientras que utilizo implicitamente para crear separación entre los objetos las varibales de número de noches fuera de la primera vivienda, tiempo de desplazamiento hacia el trabajo y año de construcción de la vivienda ---como indicador \textit{muy pobre} de la cercanía de la vivienda al centro de la ciudad---. Luego, cuando analicemos los resultados reflexionaré con mayor profundidad sobre el motivo de elegir estas variables.
+
+\img{segNoches_boxtotal}{1}
+
+Filtramos los objetos por mayores de edad en los que se conozca cada una de las variables que hemos mencionado antes, tenemos en total 20635 obejtos filtrados de los que usaremos la totalidad para los cálculos, aunque sólo una muestra de 1000 para el \textit{scatter plot}.
+
+\subsection{Comparativa}
+
+\cfloat{
+\begin{tabular}{cccccc}
+\hline
+\rowcolor[HTML]{C0C0C0} 
+\textbf{ALG} & \textbf{tiempo} & \textbf{CH} & \textbf{SC} & \textbf{DB} & \textbf{N} \\ \hline
+\multicolumn{1}{|c|}{\textbf{KMeans}} & \multicolumn{1}{c|}{0.476} & \multicolumn{1}{c|}{5495.198} & \multicolumn{1}{c|}{0.262} & \multicolumn{1}{c|}{1.189} & \multicolumn{1}{c|}{5} \\ \hline
+\multicolumn{1}{|c|}{\textbf{Ward}} & \multicolumn{1}{c|}{13.831} & \multicolumn{1}{c|}{4242.982} & \multicolumn{1}{c|}{0.209} & \multicolumn{1}{c|}{1.361} & \multicolumn{1}{c|}{5} \\ \hline
+\multicolumn{1}{|c|}{\textbf{DBScan}} & \multicolumn{1}{c|}{1.536} & \multicolumn{1}{c|}{633.117} & \multicolumn{1}{c|}{0.011} & \multicolumn{1}{c|}{2.260} & \multicolumn{1}{c|}{17} \\ \hline
+\multicolumn{1}{|c|}{\textbf{Birch}} & \multicolumn{1}{c|}{1.557} & \multicolumn{1}{c|}{4518.485} & \multicolumn{1}{c|}{0.199} & \multicolumn{1}{c|}{1.355} & \multicolumn{1}{c|}{5} \\ \hline
+\multicolumn{1}{|c|}{\textbf{Spectral}} & \multicolumn{1}{c|}{103.558} & \multicolumn{1}{c|}{5318.041} & \multicolumn{1}{c|}{0.258} & \multicolumn{1}{c|}{1.191} & \multicolumn{1}{c|}{5} \\ \hline
+\end{tabular}
+}
+
+\subsection{K-Means}
+
+\begin{enumerate}
+\item \textbf{Tiempo:} 0.48 segundos
+\item \textbf{Índice de Calinski-Harabasz:} 5495.198
+\item \textbf{Coeficiente de Silhouette:} 0.262
+\item \textbf{Índice de Davies-Bouldin:} 1.189
+\end{enumerate}
+
+\cfloat{
+\begin{tabular}{|c|c|c|}
+\hline
+\rowcolor[HTML]{C0C0C0} 
+\textbf{Clúster} & \textbf{Tamaño} & \textbf{Porcentaje} \\ \hline
+\multicolumn{1}{|c|}{\textbf{3}} & \multicolumn{1}{c|}{8378} & \multicolumn{1}{c|}{40.60} \\ \hline
+\multicolumn{1}{|c|}{\textbf{0}} & \multicolumn{1}{c|}{5042} & \multicolumn{1}{c|}{24.43} \\ \hline
+\multicolumn{1}{|c|}{\textbf{1}} & \multicolumn{1}{c|}{3451} & \multicolumn{1}{c|}{16.72} \\ \hline
+\multicolumn{1}{|c|}{\textbf{4}} & \multicolumn{1}{c|}{2725} & \multicolumn{1}{c|}{13.21}\\ \hline
+\multicolumn{1}{|c|}{\textbf{2}} & \multicolumn{1}{c|}{1039} & \multicolumn{1}{c|}{5.04} \\ \hline
+\end{tabular}
+}
+
+\img{segNoches_kmeans_box}{0.8}
+\\
+
+\img{segNoches_kmeans_heat}{0.8}
+\\
+
+\img{segNoches_kmeans_scatter}{0.8}
+
+Este es el algoritmo que mejor resultados da en este problema, vemos cómo las variables que más separan los clústers son los estudios y el tiempo de desplazamiento ---especialmente esta última--- y cómo hay una dominancia clarísima de objetos que pasan menos de 15 días fuera de la vivienda habitual al año. Luego analizaremos los perfiles que el algoritmo de clustering describe.
+
+\subsection{Agglomerative Ward}
+
+
+\begin{enumerate}
+\item \textbf{Tiempo:} 13.831 segundos
+\item \textbf{Índice de Calinski-Harabasz:} 4242.982
+\item \textbf{Coeficiente de Silhouette:} 0.209
+\item \textbf{Índice de Davies-Bouldin:} 1.361
+\end{enumerate}
+
+\cfloat{
+\begin{tabular}{|c|c|c|}
+\hline
+\rowcolor[HTML]{C0C0C0} 
+\textbf{Clúster} & \textbf{Tamaño} & \textbf{Porcentaje} \\ \hline
+\multicolumn{1}{|c|}{\textbf{0}} & \multicolumn{1}{c|}{9190} & \multicolumn{1}{c|}{44.54} \\ \hline
+\multicolumn{1}{|c|}{\textbf{1}} & \multicolumn{1}{c|}{4984} & \multicolumn{1}{c|}{24.15} \\ \hline
+\multicolumn{1}{|c|}{\textbf{2}} & \multicolumn{1}{c|}{3554} & \multicolumn{1}{c|}{17.22} \\ \hline
+\multicolumn{1}{|c|}{\textbf{3}} & \multicolumn{1}{c|}{1506} & \multicolumn{1}{c|}{7.30}\\ \hline
+\multicolumn{1}{|c|}{\textbf{4}} & \multicolumn{1}{c|}{1401} & \multicolumn{1}{c|}{6.79} \\ \hline
+\end{tabular}
+}
+
+\img{segNoches_ward_box}{0.8}
+\\
+
+\img{segNoches_ward_heat}{0.8}
+\\
+
+\img{segNoches_ward_dendo}{0.8}
+\\
+
+\img{segNoches_ward_scatter}{0.8}
+
+En este caso, todos los índices de calidad señalan una peor separación de K-Means, siguen siendo \textit{Estudios} y \textit{Tiempo de desplazamiento} las variables que mejor separan los clústers, pero sin embargo la varianza dentro de cada clúster hace aumentar mucho el rango intercuantílico en el gráfico de caja solapandose los clústers más que en el caso anterior, sin embargo la tendencia de agrupación es similar.
+
+\subsection{DBScan}
+
+\begin{enumerate}
+\item \textbf{Tiempo:} 1.536 segundos
+\item \textbf{Índice de Calinski-Harabasz:} 633.117
+\item \textbf{Coeficiente de Silhouette:} 0.011
+\item \textbf{Índice de Davies-Bouldin:} 2.260
+\end{enumerate}
+
+\cfloat{
+\begin{tabular}{|c|c|c|}
+\hline
+\rowcolor[HTML]{C0C0C0} 
+\textbf{Clúster} & \textbf{Tamaño} & \textbf{Porcentaje} \\ \hline
+\textbf{2} & 6168 & 29.89 \\ \hline
+\textbf{0} & 5066 & 24.55 \\ \hline
+\textbf{1} & 4252 & 20.61 \\ \hline
+\textbf{5} & 2338 & 11.33 \\ \hline
+\textbf{-1} & 1224 & 5.93 \\ \hline
+\textbf{4} & 867 & 4.20 \\ \hline
+\textbf{3} & 496 & 2.40 \\ \hline
+\textbf{8} & 47 & 0.23 \\ \hline
+\textbf{6} & 36 & 0.17 \\ \hline
+\textbf{7} & 25 & 0.12 \\ \hline
+\textbf{11} & 21 & 0.10 \\ \hline
+\textbf{9} & 20 & 0.10 \\ \hline
+\textbf{10} & 20 & 0.10 \\ \hline
+\textbf{12} & 16 & 0.08 \\ \hline
+\textbf{13} & 15 & 0.07 \\ \hline
+\textbf{14} & 14 & 0.07 \\ \hline
+\textbf{15} & 10 & 0.05 \\ \hline
+\end{tabular}
+}
+
+\img{segNoches_dbscan_box}{0.8}
+\\
+
+\img{segNoches_dbscan_heat}{0.8}
+\\
+
+\img{segNoches_dbscan_scatter}{0.8}
+
+Este es sin duda el peor caso, los índices denotan un rendimiento muy pobre y se observa a simple vista tanto en el gráfico de caja como el \textit{scatter} que los clústers se solapan sin una separación clara de ninguna característica. A simple vista parece que hay buscado todas las combinaciones alto-bajo de \textit{Noches fuera}, \textit{Tiempo de desplazamiento} y \textit{Estudios} y las ha combinado, sin embargo, los 3 primeros clúster que describen el 75\% de los objetos es una  masa uniforme que no discrimina en ningún sentido. Estuve manipulando el tamaño de épsilon y el tamaño mínimo para intentar mejorar el rendimiento pero cuando reducía demasiado el número de clústers el rendimiento era aún peor.
+
+\subsection{Birch}
+
+\begin{enumerate}
+\item \textbf{Tiempo:} 1.557 segundos
+\item \textbf{Índice de Calinski-Harabasz:} 4518.485
+\item \textbf{Coeficiente de Silhouette:} 0.199
+\item \textbf{Índice de Davies-Bouldin:} 1.355
+\end{enumerate}
+
+\cfloat{
+\begin{tabular}{|c|c|c|}
+\hline
+\rowcolor[HTML]{C0C0C0} 
+\textbf{Clúster} & \textbf{Tamaño} & \textbf{Porcentaje} \\ \hline
+\textbf{4} & 5841 & 28.31 \\ \hline
+\textbf{2} & 5659 & 27.42 \\ \hline
+\textbf{0} & 4769 & 23.11 \\ \hline
+\textbf{1} & 3462 & 16.78 \\ \hline
+\textbf{3} & 904 & 4.38 \\ \hline
+\end{tabular}
+}
+
+\img{segNoches_birch_box}{0.8}
+\\
+
+\img{segNoches_birch_heat}{0.8}
+\\
+
+\img{segNoches_birch_scatter}{0.8}
+
+Birch ofrece un rendimiento similar al de \textit{Ward}, separa los objetos en base a sus variables con relativo acierto, pero se expanden demasiado por el espacio y se solapan en exceso. Lo curioso en este caso es que ha utilizado como elemento de separación el valor del año de construcción mucho más que el resto de algoritmos.
+
+\subsection{Spectral}
+
+\begin{enumerate}
+\item \textbf{Tiempo:} 103.558 segundos
+\item \textbf{Índice de Calinski-Harabasz:} 5318.041
+\item \textbf{Coeficiente de Silhouette:} 0.258
+\item \textbf{Índice de Davies-Bouldin:} 1.191
+\end{enumerate}
+
+\cfloat{
+\begin{tabular}{|c|c|c|}
+\hline
+\rowcolor[HTML]{C0C0C0} 
+\textbf{Clúster} & \textbf{Tamaño} & \textbf{Porcentaje} \\ \hline
+\textbf{0} & 8566 & 41.51 \\ \hline
+\textbf{1} & 4981 & 24.14 \\ \hline
+\textbf{4} & 3294 & 15.96 \\ \hline
+\textbf{3} & 3059 & 14.82 \\ \hline
+\textbf{2} & 735 & 3.56 \\ \hline
+\end{tabular}
+}
+
+\img{segNoches_spectral_box}{0.8}
+\\
+
+\img{segNoches_spectral_heat}{0.8}
+\\
+
+\img{segNoches_spectral_scatter}{0.8}
+
+Estaba interesado en ver si el cambio de espacio de \textit{distancia euclídea} a \textit{RBF} separaba mejor los clústers pero el rendimiento es un ligeramente más pobre que en K-Means, tarda mucho más en ejecutarse, y no parece que defina tendencias significativamente distintas a las de K-Means.
+
+\subsection{KMeans Tuning}
+
+He tomado el algoritmo con mejor desempeño y he modificado el parámetro del número de clústers para ver si el problema de los datos es que estaba siendo forzado a generalizar demasiado, lo cual disminuía la cohesión, sin embargo a la luz de los resultados parece que es un problema de dificultad en la separación en grupos de suficiente tamaño como para ser interesantes.
+
+\cfloat{\begin{tabular}{|c|c|c|c|c|}
+\hline
+\rowcolor[HTML]{C0C0C0} 
+\textbf{Tiempo} & \textbf{CH} & \textbf{SC} & \textbf{DB} & \textbf{N} \\ \hline
+0.24 & \textbf{5562.62} & \textbf{0.26} & 1.28 & \textbf{4} \\ \hline
+0.31 & 4606.90 & 0.21 & 1.33 & \textbf{9} \\ \hline
+0.63 & 3839.90 & 0.21 & 1.38 & \textbf{14} \\ \hline
+0.96 & 3353.56 & 0.19 & 1.35 & \textbf{19} \\ \hline
+1.35 & 3050.14 & 0.19 & 1.30 & \textbf{24} \\ \hline
+1.37 & 2800.93 & 0.20 & 1.38 & \textbf{29} \\ \hline
+1.79 & 2601.82 & 0.19 & 1.31 & \textbf{34} \\ \hline
+2.21 & 2451.75 & 0.19 & 1.37 & \textbf{39} \\ \hline
+2.22 & 2324.90 & 0.20 & 1.37 & \textbf{44} \\ \hline
+3.25 & 2209.21 & 0.19 & 1.37 & \textbf{49} \\ \hline
+3.65 & 2108.59 & 0.20 & 1.35 & \textbf{54} \\ \hline
+2.70 & 2023.07 & 0.20 & 1.38 & \textbf{59} \\ \hline
+\end{tabular}}
+
+Tomamos el mejor y generamos sus gráficas.
+\\
+
+\cfloat{
+\begin{tabular}{|c|c|c|}
+\hline
+\rowcolor[HTML]{C0C0C0} 
+\textbf{Clúster} & \textbf{Tamaño} & \textbf{Porcentaje} \\ \hline
+\textbf{1} & 9874 & 47.85 \\ \hline
+\textbf{0} & 5980 & 28.98 \\ \hline
+\textbf{2} & 3715 & 18.00 \\ \hline
+\textbf{3} & 1066 & 5.17 \\ \hline
+\end{tabular}
+}
+
+\img{segNoches_kmeans_tuned_box}{0.8}
+\\
+
+\img{segNoches_kmeans_tuned_heat}{0.8}
+\\
+
+\img{segNoches_kmeans_tuned_scatter}{0.8}
+
+Se aprecia que es una muestra dificilmente separable, aumentar el número de clústers no hace más que reducir el valor de los índices debido a la similitud de los datos, experimentalmente comprobé que cuando nos acercamos a 100 clústers la métrica sube pero debido a que crea grupos muy pequeños que sobreajustan las características concretas de la muestra, lo limité a 60 porque no tenían cualidades descriptibas suficientes para ser interesante.
+
+\subsection{Spectral Tuning}
+
+Para \textit{Spectral} los parámetros que modifico son el función de afinidad, y el número de clústers. Añado una nueva métrica, dirigida a abandonar el intento de agrupar bien la totalidad de los datos y quedarnos únicamente con la configuración del algoritmo que devuelve el conjunto de mayor tamaño de clústers con coeficiente de \textit{silhouette} (\textit{SC}) mayor de 0.35, la explico y reflexiono sobre ella en mayor profundidad en el epígrafe de \textit{Contenido Adicional}.
+
+\cfloat{
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+\rowcolor[HTML]{9B9B9B} 
+\textbf{Tiempo} & \textbf{CH} & \textbf{SC} & \textbf{DB} & \textbf{N} & \textbf{Affinity} & \textbf{SC \textgreater 0.35} \\ \hline
+100.62 & 5702.03 & 0.25 & 1.45 & 3 & rbf & 0 \\ \hline
+100.35 & 5526.76 & 0.22 & 1.53 & 3 & laplacian & 0 \\ \hline
+106.31 & 4424.30 & 0.17 & 1.77 & 3 & chi2 & 0 \\ \hline
+101.24 & 5318.71 & 0.26 & 1.19 & 5 & rbf & 0 \\ \hline
+102.23 & 4125.99 & 0.18 & 1.47 & 5 & laplacian & 0 \\ \hline
+107.29 & 3670.59 & 0.15 & 1.59 & 5 & chi2 & 0 \\ \hline
+\rowcolor[HTML]{9AFF99} 
+\textbf{103.58} & \textbf{4491.13} & \textbf{0.21} & \textbf{1.24} & \textbf{7} & \textbf{rbf} & \textbf{0.19} \\ \hline
+102.67 & 4564.19 & 0.20 & 1.30 & 7 & laplacian & 0 \\ \hline
+106.54 & 4217.36 & 0.18 & 1.33 & 7 & chi2 & 0 \\ \hline
+106.50 & 3513.86 & 0.19 & 1.35 & 9 & rbf & 0.03 \\ \hline
+100.63 & 3782.89 & 0.16 & 1.46 & 9 & laplacian & 0 \\ \hline
+109.04 & 2860.62 & 0.12 & 1.96 & 9 & chi2 & 0 \\ \hline
+\end{tabular}}
+
+De los 7 clusters nos quedamos con los 5 de mayor tamaño y SC y los dibujamos (93.28\% del total).
+
+\cfloat{
+\begin{tabular}{|c|c|c|}
+\hline
+\rowcolor[HTML]{C0C0C0} 
+\textbf{Clúster} & \textbf{Tamaño} & \textbf{Porcentaje} \\ \hline
+\textbf{0} & 4536 & 23.57 \\ \hline
+\textbf{6} & 4416 & 22.94 \\ \hline
+\textbf{1} & 4063 & 21.11 \\ \hline
+\textbf{5} & 3360 & 17.46 \\ \hline
+\textbf{4} & 2873 & 14.93 \\ \hline
+\end{tabular}
+}
+
+\img{segNoches_spectral_tuned_box}{0.8}
+\\
+
+\img{segNoches_spectral_tuned_heat}{0.8}
+\\
+
+\img{segNoches_spectral_tuned_scatter}{0.8}
+
+\subsection{Resultados}
+
+Habría sido muy interesante observar el impacto de ser capaces de discriminar en los gráficos entre ocupados y parados porque es posible que tenga una potencia explicativa muy relevante, sin embargo sobre estas variables sólo podemos hacer estimaciones. 
+
+Parece que la edad no es un factor determinante para definir ningún grupo, así como el año de construcción del edificio ---como indicador de la centralidad geográfica de la vivienda--- que esperaba ver correlacionada con el tiempo de desplazamiento ---no ha sucedido--- y quizás con el número de noches fuera, pensando que la gente que pasa gran parte de las noches fuera es posible que tenga una vivienda orientada a su trabajo y viviera en zonas residenciales de la periferia de nueva construcción separados de su familia ---de ahí el motivo del alto número de noches fuera---.
+
+Para hacer este análisis me estoy basando en los grupos más importantes de DBScan, que separaban con eficacia grandes tendencias, pero fracasaba en crear grupos más reducidos suficientemente interesantes, más que individualizar hasta lo obvio; y en los mejores resultados de los dos últimos apartados.
+
+Lo primero que observamos es que la edad no parece un factor determinante para el agrupamiento, a excepción de los algoritmos con mayor número de clusters que aislaban un grupo de personas mayores que siempre dormían en casa por lo demás, sin embargo sí se aprecia que hay una tendencia a que la gente que pasa muchas noches fuera están en una horquilla de edad menor que la gente que duerme habitualmente en su casa ---esto es probablemente porque estarán jubilados y se estabilizan sus rutinas---.
+
+En el mejor resultado de KMeans se definen cuatro grupos interesantes
+
+\begin{enumerate}
+\item Grupo 1 (48.85\%). Son personas con baja formación que duermen siempre en su casa y viven cerca de su trabajo, probablemente en el mismo barrio.
+\item Grupo 0 (28.98\%). Son personas con formación universitaria que pasan muy pocas noches fuera de casa ---como puede ser el caso de médicos obligados a hacer guardias--- pero viven un poco más lejos de su trabajo, probablemente tengan que desplazarse en algún medio de transporte.
+\item Grupo 2 (18\%). Los que más tiempo tardan en llegar a su trabajo son personas más jóvenes, quizás residiendo en zonas más baratas y esto se da con independencia de su formación académica.
+\item Grupo 3 (5.17\%). Las personas que pasan más de un tercio del año fuera de su residencia habitual, son los más jóvenes y con formación profesional superior o universitaria, casi con total seguridad por motivos de trabajo. El tiempo de desplazamiento no correlaciona de ninguna manera con esta clase y se reparten por todo su espectro.
+\end{enumerate}
+
+\section{Caso de estudio 2. Diferencia de edad con el cónyuge}
+
+\subsection{Descripción subconjunto}
+
+En este caso quiero estudiar los distintos perfiles de parejas y cómo correlaciona diferencias de edad altas con tu pareja y la diferencia de edad de sus padres, la segunda variable la he estimado con la diferencia de la edad de los padres, es evidente que este análisis está sesgado por dos motivos: en primer lugar los padres tienen que vivir con la pareja para constar en el censo, y en segundo lugar, la variable de la diferencia de edad con el conyuge refleja mucho mejor este fenómeno que la variable calculada porque la edad de los padres viene en quinquenios y la diferencia de las dos describe mucho peor este fenómeno. De este análisis retiré el nivel de estudios de la chica porque no describía una tendencia en ningún grupo y sólo obstaculizaba la segmentación. 
+
+Queda la incertidumbre de saber cómo han tratado el fenómeno que estudiamos en parejas del mismo sexo,pues no parece que haya casilla para este hecho.
+
+He filtrado para quedarme con las personas con pareja mayores de edad, donde ambos padres de uno de ellos viven en el mismo domicilio y constan todos los datos necesarios para el análisis.
+
+\img{edadDif_boxtotal}{1}
+
+\subsection{Comparativa}
+
+\cfloat{
+\begin{tabular}{cccccc}
+\hline
+\rowcolor[HTML]{C0C0C0} 
+\textbf{ALG} & \textbf{tiempo} & \textbf{CH} & \textbf{SC} & \textbf{DB} & \textbf{N} \\ \hline
+\multicolumn{1}{|c|}{\textbf{KMeans}} & \multicolumn{1}{c|}{0.18} & \multicolumn{1}{c|}{3655.99} & \multicolumn{1}{c|}{0.32} & \multicolumn{1}{c|}{1.017} & \multicolumn{1}{c|}{5} \\ \hline
+\multicolumn{1}{|c|}{\textbf{Ward}} & \multicolumn{1}{c|}{1.67} & \multicolumn{1}{c|}{3160.16} & \multicolumn{1}{c|}{0.31} & \multicolumn{1}{c|}{1.05} & \multicolumn{1}{c|}{5} \\ \hline
+\multicolumn{1}{|c|}{\textbf{DBScan}} & \multicolumn{1}{c|}{0.37} & \multicolumn{1}{c|}{501.84} & \multicolumn{1}{c|}{0.12} & \multicolumn{1}{c|}{2.25} & \multicolumn{1}{c|}{8} \\ \hline
+\multicolumn{1}{|c|}{\textbf{Birch}} & \multicolumn{1}{c|}{0.46} & \multicolumn{1}{c|}{2551.53} & \multicolumn{1}{c|}{0.31} & \multicolumn{1}{c|}{1.11} & \multicolumn{1}{c|}{5} \\ \hline
+\multicolumn{1}{|c|}{\textbf{Spectral}} & \multicolumn{1}{c|}{10.42} & \multicolumn{1}{c|}{2995.70} & \multicolumn{1}{c|}{0.33} & \multicolumn{1}{c|}{1.15} & \multicolumn{1}{c|}{5} \\ \hline
+\end{tabular}
+}
+
+De nuevo, KMeans es el algoritmo con mejores índices de calidad reñido ligeramente con \textit{Spectral Clustering}
+
+\subsection{K-Means}
+
+\begin{enumerate}
+\item \textbf{Tiempo:} 0.18segundos
+\item \textbf{Índice de Calinski-Harabasz:} 3655.99
+\item \textbf{Coeficiente de Silhouette:} 0.320
+\item \textbf{Índice de Davies-Bouldin:} 1.017
+\end{enumerate}
+
+\cfloat{
+\begin{tabular}{|c|c|c|}
+\hline
+\rowcolor[HTML]{C0C0C0} 
+\textbf{Clúster} & \textbf{Tamaño} & \textbf{Porcentaje} \\ \hline
+\textbf{1} & 2879 & 35.27 \\ \hline
+\textbf{2} & 2183 & 26.75 \\ \hline
+\textbf{4} & 1271 & 15.57 \\ \hline
+\textbf{3} & 963 & 11.80 \\ \hline
+\textbf{0} & 866 & 10.61 \\ \hline
+\end{tabular}
+}
+
+\img{edadDif_kmeans_box}{0.8}
+\\
+
+\img{edadDif_kmeans_heat}{0.8}
+\\
+
+\img{edadDif_kmeans_scatter}{0.8}
+
+En el gráfico \textit{scatter} se aprecia que el algoritmo es capaz de separar con relativa eficacia los clústers mediante la interacción de dos variables, lo cual parece un inicio prometedor, asimismo el porcentaje de los clusters está repartido no habiendo una clase que devore la posibilidad de separar el res
+\subsection{Agglomerative Ward}
+
+
+\begin{enumerate}
+\item \textbf{Tiempo:} 1.67 segundos
+\item \textbf{Índice de Calinski-Harabasz:} 3160.161
+\item \textbf{Coeficiente de Silhouette:} 0.310
+\item \textbf{Índice de Davies-Bouldin:} 1.053
+\end{enumerate}
+
+\cfloat{
+\begin{tabular}{|c|c|c|}
+\hline
+\rowcolor[HTML]{C0C0C0} 
+\textbf{Clúster} & \textbf{Tamaño} & \textbf{Porcentaje} \\ \hline
+\textbf{0} & 3380 & 41.41 \\ \hline
+\textbf{1} & 2233 & 27.36 \\ \hline
+\textbf{3} & 976 & 11.96 \\ \hline
+\textbf{4} & 965 & 11.82 \\ \hline
+\textbf{2} & 608 & 7.45 \\ \hline
+\end{tabular}
+}
+
+\img{edadDif_ward_box}{0.8}
+\\
+
+\img{edadDif_ward_heat}{0.8}
+\\
+
+\img{edadDif_ward_dendo}{0.8}
+\\
+
+\img{edadDif_ward_scatter}{0.8}
+
+Reconoce las mismas tendencias que K-Means pero la altura de las cajas es mayor, lo cual denota menor cohesión en los clusters.
+
+\subsection{DBScan}
+
+\begin{enumerate}
+\item \textbf{Tiempo:} 0.371 segundos
+\item \textbf{Índice de Calinski-Harabasz:} 501.844
+\item \textbf{Coeficiente de Silhouette:} 0.119
+\item \textbf{Índice de Davies-Bouldin:} 2.24
+\end{enumerate}
+
+\cfloat{
+\begin{tabular}{|c|c|c|}
+\hline
+\rowcolor[HTML]{C0C0C0} 
+\textbf{Clúster} & \textbf{Tamaño} & \textbf{Porcentaje} \\ \hline
+\textbf{0} & 4258 & 52.17 \\ \hline
+\textbf{2} & 1750 & 21.44 \\ \hline
+\textbf{3} & 891 & 10.92 \\ \hline
+\textbf{1} & 850 & 10.41 \\ \hline
+\textbf{4} & 269 & 3.30 \\ \hline
+\textbf{-1} & 74 & 0.91 \\ \hline
+\textbf{5} & 50 & 0.61 \\ \hline
+\textbf{6} & 20 & 0.25 \\ \hline
+\end{tabular}
+}
+
+\img{edadDif_dbscan_box}{0.8}
+\\
+
+\img{edadDif_dbscan_heat}{0.8}
+\\
+
+\img{edadDif_dbscan_scatter}{0.8}
+
+De nuevo tiene dificultades separando los datos, ha creado conjuntos aislados basados en la diferencia de edad con el cónyugue y la diferencia de los padres, ignorando prácticamente la edad y los estudios ---excepto el cluster 6 de forma anecdótica---
+
+\subsection{Birch}
+
+\begin{enumerate}
+\item \textbf{Tiempo:} 0.463 segundos
+\item \textbf{Índice de Calinski-Harabasz:} 2551.528
+\item \textbf{Coeficiente de Silhouette:} 0.309
+\item \textbf{Índice de Davies-Bouldin:} 1.107
+\end{enumerate}
+
+\cfloat{
+\begin{tabular}{|c|c|c|}
+\hline
+\rowcolor[HTML]{C0C0C0} 
+\textbf{Clúster} & \textbf{Tamaño} & \textbf{Porcentaje} \\ \hline
+\textbf{1} & 4329 & 53.04 \\ \hline
+\textbf{2} & 2179 & 26.70 \\ \hline
+\textbf{0} & 714 & 8.75 \\ \hline
+\textbf{4} & 563 & 6.90 \\ \hline
+\textbf{3} & 377 & 4.62 \\ \hline
+\end{tabular}
+}
+
+\img{edadDif_birch_box}{0.8}
+\\
+
+\img{edadDif_birch_heat}{0.8}
+\\
+
+\img{edadDif_birch_scatter}{0.8}
+
+\subsection{Spectral}
+
+\begin{enumerate}
+\item \textbf{Tiempo:} 10.415 segundos
+\item \textbf{Índice de Calinski-Harabasz:} 2995.700
+\item \textbf{Coeficiente de Silhouette:} 0.334
+\item \textbf{Índice de Davies-Bouldin:} 1.149
+\end{enumerate}
+
+\cfloat{
+\begin{tabular}{|c|c|c|}
+\hline
+\rowcolor[HTML]{C0C0C0} 
+\textbf{Clúster} & \textbf{Tamaño} & \textbf{Porcentaje} \\ \hline
+\textbf{0} & 3721 & 45.59 \\ \hline
+\textbf{1} & 2007 & 24.59 \\ \hline
+\textbf{2} & 952 & 11.66 \\ \hline
+\textbf{3} & 798 & 9.78 \\ \hline
+\textbf{4} & 684 & 8.38 \\ \hline
+\end{tabular}
+}
+\\
+
+
+
+
+\img{edadDif_spectral_box}{0.8}
+\\
+
+\img{edadDif_spectral_heat}{0.8}
+\\
+
+\img{edadDif_spectral_scatter}{0.8}
+
+Mirándolo por encima el rendimiento es muy similar al de K-Means
+
+\subsection{KMeans Tuning}
+
+Vemos cómo el coeficiente de \textit{Calinski-Harabasz} decrece a medida que aumenta el número de clases, \textit{Davies-Bouldin} se mantiene constante prácticamente y el coeficiente de silueta describe una parábola, cuando N es bajo es probable que la separación sea buena y suba el valor, en los valores medios ni la cohesión ni la separación es buena y para N alto, la cohesión debe ser alta y vuelve a subir el valor.
+
+Siguiente la misma estrategia de antes nos vamos a quedar con los cinco mejores clústers para haber qué tendencia explican (20\% de la muestra)
+
+\cfloat{
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+\rowcolor[HTML]{9B9B9B} 
+\textbf{Tiempo} & \textbf{CH} & \textbf{SC} & \textbf{DB} & \textbf{N} & \textbf{SC \textgreater 0.35} \\ \hline
+0.08 & 4024.84 & 0.37 & 0.94 & \textbf{4} & 0.44 \\ \hline
+0.10 & 3205.41 & 0.32 & 1.08 & \textbf{9} & 0.25 \\ \hline
+0.18 & 2788.15 & 0.30 & 1.08 & \textbf{14} & 0.21 \\ \hline
+0.27 & 2613.11 & 0.31 & 1.09 & \textbf{19} & 0.31 \\ \hline
+0.25 & 2394.99 & 0.30 & 1.09 & \textbf{24} & 0.32 \\ \hline
+0.31 & 2219.15 & 0.29 & 1.14 & \textbf{29} & 0.27 \\ \hline
+0.31 & 2156.65 & 0.32 & 1.07 & \textbf{34} & 0.42 \\ \hline
+0.36 & 2108.38 & 0.33 & 1.02 & \textbf{39} & 0.40 \\ \hline
+0.41 & 2060.16 & 0.36 & 1.03 & \textbf{44} & 0.37 \\ \hline
+0.47 & 1983.53 & 0.35 & 1.05 & \textbf{49} & 0.43 \\ \hline
+0.49 & 1932.42 & 0.35 & 1.06 & \textbf{54} & 0.39 \\ \hline
+\rowcolor[HTML]{9AFF99} 
+\textbf{0.52} & \textbf{1933.14} & \textbf{0.36} & \textbf{1.05} & \textbf{59} & \textbf{0.49} \\ \hline
+\end{tabular}
+}
+
+\cfloat{
+\begin{tabular}{|c|c|c|}
+\hline
+\rowcolor[HTML]{C0C0C0} 
+\textbf{Clúster} & \textbf{Tamaño} & \textbf{Porcentaje} \\ \hline
+\textbf{11} & 436 & 25.80 \\ \hline
+\textbf{26} & 396 & 23.43 \\ \hline
+\textbf{39} & 347 & 20.53 \\ \hline
+\textbf{10} & 288 & 17.04 \\ \hline
+\textbf{17} & 223 & 13.20 \\ \hline
+\end{tabular}
+}
+
+\img{edadDif_kmeans_tuned_box}{0.8}
+\\
+
+\img{edadDif_kmeans_tuned_heat}{0.8}
+\\
+
+\img{edadDif_kmeans_tuned_scatter}{0.8}
+
+Lamentablemente son tan concentrados esos clústers que disectan la tendencia dominante, parejas jóvenes, viviendo con sus padres y todas las posibles combinaciones de diferencias en la pareja / diferencias en los padres. Por sacar una nota de humor, qué clase de relaciones reflejan el clúster 10, un 4\% de la muestra son personas de 21 años donde el hombre es entre cinco y diez años mayor que la mujer y viven con los padres que también guardan la misma diferencia, ¡esas chicas tienen entre 10 y 15 años!. \textit{De hecho, y por hacer honor a la verdad, es posible que sea la chica ---ya que no incluimos la variable sexo--- la que tenga 21 años, haciendo todo mucho menos anecdótico}.
+
+\subsection{Spectral Tuning}
+
+\cfloat{
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+\rowcolor[HTML]{9B9B9B} 
+\textbf{Tiempo} & \textbf{CH} & \textbf{SC} & \textbf{DB} & \textbf{N} & \textbf{Affinity} & \textbf{SC \textgreater 0.35} \\ \hline
+10.10 & 3465.55 & 0.34 & 1.14 & 3 & rbf & 0.28 \\ \hline
+9.48 & 3461.41 & 0.34 & 1.16 & 3 & laplacian & 0.27 \\ \hline
+10.47 & 3397.16 & 0.32 & 1.19 & 3 & chi2 & 0.49 \\ \hline
+\rowcolor[HTML]{9AFF99} 
+\textbf{10.07} & \textbf{2998.01} & \textbf{0.33} & \textbf{1.15} & \textbf{5} & \textbf{rbf} & \textbf{0.70} \\ \hline
+9.74 & 2769.92 & 0.27 & 1.21 & 5 & laplacian & 0.48 \\ \hline
+10.58 & 2906.67 & 0.22 & 1.41 & 5 & chi2 & 0 \\ \hline
+10.09 & 2725.39 & 0.27 & 1.09 & 7 & rbf & 0.14 \\ \hline
+9.82 & 2687.74 & 0.24 & 1.14 & 7 & laplacian & 0.17 \\ \hline
+10.58 & 2214.34 & 0.18 & 1.63 & 7 & chi2 & 0 \\ \hline
+10.23 & 2113.17 & 0.19 & 1.26 & 9 & rbf & 0.16 \\ \hline
+9.86 & 2280.67 & 0.22 & 1.36 & 9 & laplacian & 0.11 \\ \hline
+10.77 & 2047.74 & 0.18 & 1.47 & 9 & chi2 & 0.06 \\ \hline
+\end{tabular}}
+\\
+
+\cfloat{
+\begin{tabular}{|c|c|c|}
+\hline
+\rowcolor[HTML]{C0C0C0} 
+\textbf{Clúster} & \textbf{Tamaño} & \textbf{Porcentaje} \\ \hline
+\textbf{4} & 3690 & 45.21 \\ \hline
+\textbf{1} & 2039 & 24.98 \\ \hline
+\textbf{2} & 952 & 11.66 \\ \hline
+\textbf{0} & 797 & 9.76 \\ \hline
+\textbf{3} & 684 & 8.38 \\ \hline
+\end{tabular}
+}
+
+
+
+\img{edadDif_spectral_tuned_box}{0.8}
+\\
+
+\img{edadDif_spectral_tuned_heat}{0.8}
+\\
+
+\img{edadDif_spectral_tuned_scatter}{0.8}
+
+En este caso, el clúster seleccionado explica exactamente el mismo tipo de fenómenos que K-Means pero aprieta mucho menos la variable \textit{Estudios}, dejando la caja del gráfico de caja mucho casi el doble de alta, pero guarda las mismas tendencias y tamaños.
+
+\subsection{Resultados}
+
+\textit{Tomo principalmente para el análisis el resultado de K-Means(5) sin ajuste de parámetros}
+
+Lo primero que apreciamos ---para sorpresa de nadie--- es que las parejas donde la tendencia es que el chico sea entre 5 y 15 años mayor que la chica, los padres también guardan esta relación. Y de nuevo, a nadie se le caen los anillos al ver que sólo el 11.8\% de las parejas ---que comparten vivienda con los padres--- la chica es mayor que el chico. 
+
+Los perfiles que se derivan del análisis son interesantes.
+
+\begin{enumerate}
+\item Grupo 1 (35.27\%). Son parejas jóvenes que viven con los padres de uno de ellos y tienen baja formación
+\item Grupo 2 (26.75\%). Son parejas jóvenes ---aunque hay muchos casos que no siguen la tendencia--- donde uno de ellos tiene formación universitaria, el chico es entre 1 y 5 años mayor y no se aprecia diferencia en los padres. \textit{El grupo estándar}
+\item Grupo 4 (15.57\%). Son personas muy jóvenes con baja formación donde el chico es hasta 10 años mayor que la chica y replican la misma conducta que los padres.
+\item Grupo 3 (11.80\%). En este caso son las chicas las que son mayores que sus parejas y reflejan claramente la misma relación que sus padres.
+\item Grupo 0 (10.60\%). Por último, éste es el grupo de las personas de 40 años, con la formación más baja de la muestra, con parejas no mucho mayores que ellos, con padres donde esta diferencia tampoco es drástica, y es posiblemente el caso de matrimonios con pocos recursos económicos cuyos padres mayores entran a vivir con ellos porque no se pueden valer por sí mismos, o porque nunca abandonaron el domicilio de los padres.
+\end{enumerate}
+
+\section{Caso de estudio 3. Dependencia en la vivienda}
+
+\subsection{Descripción subconjunto}
+
+En este caso quiero dibujar una imagen superficial de la situación de las familias, donde relaciono los estudios de ambos, el número de generaciones en una casa, la proporción de parados y el número de miembros del núcleo familiar no hijos, estas dos últimas variables las he calculado con el número de parados y el número de miembros; y con el número de miembros y el número de hijos respectivamente. Eliminé de las variables lo referente al estado de la casa y el año de construcción porque no daban información de valor.
+
+\img{parados_boxtotal}{1}
+
+\subsection{Comparativa}
+
+El análisis comparativo sigue reflejando el mismo fenómeno que hemos visto en los dos casos anteriores y no me detendré en repetir lo mismo, en este caso la diferencia de K-Means es aún más destacable.
+\\
+
+\cfloat{
+\begin{tabular}{cccccc}
+\hline
+\rowcolor[HTML]{C0C0C0} 
+\textbf{ALG} & \textbf{tiempo} & \textbf{CH} & \textbf{SC} & \textbf{DB} & \textbf{N} \\ \hline
+\multicolumn{1}{|c|}{\textbf{KMeans}} & \multicolumn{1}{c|}{0.297} & \multicolumn{1}{c|}{8721.470} & \multicolumn{1}{c|}{0.335} & \multicolumn{1}{c|}{1.119} & \multicolumn{1}{c|}{5} \\ \hline
+\multicolumn{1}{|c|}{\textbf{Ward}} & \multicolumn{1}{c|}{10.487} & \multicolumn{1}{c|}{7484.4360} & \multicolumn{1}{c|}{0.278} & \multicolumn{1}{c|}{1.132} & \multicolumn{1}{c|}{5} \\ \hline
+\multicolumn{1}{|c|}{\textbf{DBScan}} & \multicolumn{1}{c|}{1.506} & \multicolumn{1}{c|}{2062.2817} & \multicolumn{1}{c|}{0.319} & \multicolumn{1}{c|}{1.316} & \multicolumn{1}{c|}{52} \\ \hline
+\multicolumn{1}{|c|}{\textbf{Birch}} & \multicolumn{1}{c|}{1.184} & \multicolumn{1}{c|}{5330.219} & \multicolumn{1}{c|}{0.296} & \multicolumn{1}{c|}{1.355} & \multicolumn{1}{c|}{5} \\ \hline
+\multicolumn{1}{|c|}{\textbf{Spectral}} & \multicolumn{1}{c|}{99.53} & \multicolumn{1}{c|}{6954.532} & \multicolumn{1}{c|}{0.313} & \multicolumn{1}{c|}{1.125} & \multicolumn{1}{c|}{5} \\ \hline
+\end{tabular}
+}
+
+\subsection{K-Means}
+
+\begin{enumerate}
+\item \textbf{Tiempo:} 0.297 segundos
+\item \textbf{Índice de Calinski-Harabasz:} 8721.47
+\item \textbf{Coeficiente de Silhouette:} 0.335
+\item \textbf{Índice de Davies-Bouldin:} 1.119
+\end{enumerate}
+
+\cfloat{
+\begin{tabular}{|c|c|c|}
+\hline
+\rowcolor[HTML]{C0C0C0} 
+\textbf{Clúster} & \textbf{Tamaño} & \textbf{Porcentaje} \\ \hline
+\textbf{1} & 5580 & 27.90 \\ \hline
+\textbf{4} & 5006 & 25.03 \\ \hline
+\textbf{2} & 3435 & 17.18 \\ \hline
+\textbf{0} & 3221 & 16.11 \\ \hline
+\textbf{3} & 2758 & 13.79 \\ \hline
+\end{tabular}
+}
+
+\img{parados_kmeans_box}{0.8}
+\\
+
+\img{parados_kmeans_heat}{0.8}
+\\
+
+\img{parados_kmeans_scatter}{0.8}
+
+Se aprecia que excepto el número de miembros no hijos, todas las variables están involucradas en la descripción de los fenómenos que describen los clusters.
+
+\subsection{Agglomerative Ward}
+
+
+\begin{enumerate}
+\item \textbf{Tiempo:} 10.487 segundos
+\item \textbf{Índice de Calinski-Harabasz:} 7484.436
+\item \textbf{Coeficiente de Silhouette:} 0.278
+\item \textbf{Índice de Davies-Bouldin:} 1.132
+\end{enumerate}
+
+\cfloat{
+\begin{tabular}{|c|c|c|}
+\hline
+\rowcolor[HTML]{C0C0C0} 
+\textbf{Clúster} & \textbf{Tamaño} & \textbf{Porcentaje} \\ \hline
+\textbf{0} & 7913 & 39.56 \\ \hline
+\textbf{1} & 3496 & 17.48 \\ \hline
+\textbf{2} & 3224 & 16.12 \\ \hline
+\textbf{3} & 2963 & 14.81 \\ \hline
+\textbf{4} & 2404 & 12.02 \\ \hline
+\end{tabular}
+}
+
+\img{parados_ward_box}{0.8}
+\\
+
+\img{parados_ward_heat}{0.8}
+\\
+
+\img{parados_ward_dendo}{0.8}
+\\
+
+\img{parados_ward_scatter}{0.8}
+
+\subsection{DBScan}
+
+\begin{enumerate}
+\item \textbf{Tiempo:} 1.506 segundos
+\item \textbf{Índice de Calinski-Harabasz:} 2062.2817
+\item \textbf{Coeficiente de Silhouette:} 0.319
+\item \textbf{Índice de Davies-Bouldin:} 1.316
+\end{enumerate}
+
+Hay un total de 52 clusters, sólo imprimo las 14 primeras. En este caso el número de segmentos generados hace que sea ilegible la información y la conservo para demostrar el fenómeno de que un número mayor de clusters suele estar relacionado con un mejor resultado en el coeficiente de Silhouette, debido a la alta cohesión de grupos tan pequeños, con cajas con muy poca varianza y una segmentación del espacio excesiva, resultando probablemente en una pésima capacidad de generalización.
+
+\cfloat{
+\begin{tabular}{|c|c|c|}
+\hline
+\rowcolor[HTML]{C0C0C0} 
+\textbf{Clúster} & \textbf{Tamaño} & \textbf{Porcentaje} \\ \hline
+\textbf{0} & 2502 & 12.51 \\ \hline
+\textbf{18} & 1609 & 8.04 \\ \hline
+\textbf{10} & 1454 & 7.27 \\ \hline
+\textbf{5} & 1318 & 6.59 \\ \hline
+\textbf{2} & 1230 & 6.15 \\ \hline
+\textbf{1} & 913 & 4.57 \\ \hline
+\textbf{6} & 823 & 4.12 \\ \hline
+\textbf{20} & 741 & 3.71 \\ \hline
+\textbf{-1} & 710 & 3.55 \\ \hline
+\textbf{7} & 708 & 3.54 \\ \hline
+\textbf{22} & 695 & 3.48 \\ \hline
+\textbf{25} & 602 & 3.01 \\ \hline
+\textbf{17} & 543 & 2.71 \\ \hline
+\textbf{4} & 508 & 2.54 \\ \hline
+... & ... & ... 
+\end{tabular}
+}
+
+\img{parados_dbscan_box}{0.8}
+\\
+
+\img{parados_dbscan_heat}{0.8}
+\\
+
+\img{parados_dbscan_scatter}{0.8}
+
+\subsection{Birch}
+
+\begin{enumerate}
+\item \textbf{Tiempo:} 1.184 segundos
+\item \textbf{Índice de Calinski-Harabasz:} 5330.219
+\item \textbf{Coeficiente de Silhouette:} 0.296
+\item \textbf{Índice de Davies-Bouldin:} 1.355
+\end{enumerate}
+
+\cfloat{
+\begin{tabular}{|c|c|c|}
+\hline
+\rowcolor[HTML]{C0C0C0} 
+\textbf{Clúster} & \textbf{Tamaño} & \textbf{Porcentaje} \\ \hline
+\textbf{1} & 9815 & 49.08 \\ \hline
+\textbf{4} & 5253 & 26.27 \\ \hline
+\textbf{0} & 2096 & 10.48 \\ \hline
+\textbf{3} & 2093 & 10.46 \\ \hline
+\textbf{2} & 743 & 3.71 \\ \hline
+\end{tabular}
+}
+
+\img{parados_birch_box}{0.8}
+\\
+
+\img{parados_birch_heat}{0.8}
+\\
+
+\img{parados_birch_scatter}{0.8}
+
+\subsection{Spectral}
+
+\begin{enumerate}
+\item \textbf{Tiempo:} 99.53 segundos
+\item \textbf{Índice de Calinski-Harabasz:} 6954.532
+\item \textbf{Coeficiente de Silhouette:} 0.313
+\item \textbf{Índice de Davies-Bouldin:} 1.125
+\end{enumerate}
+
+\cfloat{
+\begin{tabular}{|c|c|c|}
+\hline
+\rowcolor[HTML]{C0C0C0} 
+\textbf{Clúster} & \textbf{Tamaño} & \textbf{Porcentaje} \\ \hline
+\textbf{1} & 9659 & 48.30 \\ \hline
+\textbf{0} & 3169 & 15.85 \\ \hline
+\textbf{3} & 3123 & 15.62 \\ \hline
+\textbf{2} & 2525 & 12.62 \\ \hline
+\textbf{4} & 1524 & 7.62 \\ \hline
+\end{tabular}
+}
+
+\img{parados_spectral_box}{0.8}
+\\
+
+\img{parados_spectral_heat}{0.8}
+\\
+
+\img{parados_spectral_scatter}{0.8}
+
+\subsection{KMeans Tuning}
+
+\cfloat{
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+\rowcolor[HTML]{9B9B9B} 
+\textbf{Tiempo} & \textbf{CH} & \textbf{SC} & \textbf{DB} & \textbf{N} & \textbf{SC \textgreater 0.45} \\ \hline
+0.08 & 4024.84 & 0.37 & 0.94 & 4 & 0.44 \\ \hline
+0.10 & 3205.41 & 0.32 & 1.08 & 9 & 0.25 \\ \hline
+0.18 & 2788.15 & 0.30 & 1.08 & 14 & 0.21 \\ \hline
+0.27 & 2613.11 & 0.31 & 1.09 & 19 & 0.31 \\ \hline
+0.25 & 2394.99 & 0.30 & 1.09 & 24 & 0.32 \\ \hline
+0.31 & 2219.15 & 0.29 & 1.14 & 29 & 0.27 \\ \hline
+0.31 & 2156.65 & 0.32 & 1.07 & 34 & 0.42 \\ \hline
+0.36 & 2108.38 & 0.33 & 1.02 & 39 & 0.40 \\ \hline
+0.41 & 2060.16 & 0.36 & 1.03 & 44 & 0.37 \\ \hline
+0.47 & 1983.53 & 0.35 & 1.05 & 49 & 0.43 \\ \hline
+0.49 & 1932.42 & 0.35 & 1.06 & 54 & 0.39 \\ \hline
+\rowcolor[HTML]{9AFF99} 
+\textbf{0.52} & \textbf{1933.14} & \textbf{0.36} & \textbf{1.05} & \textbf{59} & \textbf{0.49} \\ \hline
+\end{tabular}
+}
+
+\img{parados_kmeans_tuned_box}{0.8}
+\\
+
+\img{parados_kmeans_tuned_heat}{0.8}
+\\
+
+\img{parados_kmeans_tuned_scatter}{0.8}
+
+Volvemos a sufrir el efecto de una especialización excesiva.
+
+\subsection{Spectral Tuning}
+
+\cfloat{
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+\rowcolor[HTML]{9B9B9B} 
+\textbf{Tiempo} & \textbf{CH} & \textbf{SC} & \textbf{DB} & \textbf{N} & \textbf{Affinity} & \textbf{SC \textgreater 0.45} \\ \hline
+10.10 & 3465.55 & 0.34 & 1.14 & 3 & rbf & 0.29 \\ \hline
+9.48 & 3461.41 & 0.34 & 1.16 & 3 & laplacian & 0.27 \\ \hline
+10.47 & 3397.16 & 0.32 & 1.19 & 3 & chi2 & 0.49 \\ \hline
+10.07 & 2998.01 & 0.33 & 1.15 & 5 & rbf & 0.50 \\ \hline
+9.74 & 2769.92 & 0.27 & 1.21 & 5 & laplacian & 0.48 \\ \hline
+10.58 & 2906.67 & 0.22 & 1.41 & 5 & chi2 & 0.00 \\ \hline
+\rowcolor[HTML]{9AFF99} 
+\textbf{10.09} & \textbf{2725.39} & \textbf{0.29} & \textbf{1.09} & \textbf{7} & \textbf{rbf} & \textbf{0.61} \\ \hline
+9.82 & 2687.74 & 0.24 & 1.14 & 7 & laplacian & 0.18 \\ \hline
+10.58 & 2214.34 & 0.18 & 1.63 & 7 & chi2 & 0.00 \\ \hline
+10.23 & 2113.17 & 0.19 & 1.26 & 9 & rbf & 0.16 \\ \hline
+9.86 & 2280.67 & 0.22 & 1.36 & 9 & laplacian & 0.12 \\ \hline
+10.77 & 2047.74 & 0.18 & 1.47 & 9 & chi2 & 0.07 \\ \hline
+\end{tabular}}
+
+\img{parados_spectral_tuned_box}{0.8}
+\\
+
+\img{parados_spectral_tuned_heat}{0.8}
+\\
+
+\img{parados_spectral_tuned_scatter}{0.8}
+
+
+\subsection{Resultados}
+
+Hay que destacar que la escala de estudios para el censado y para su cónyuge difieren, y no ha de interpretarse con eso en mente. Por otro lado, parece que el número de miembros no hijos se reparte de forma homogénea por todos los grupos y la única tendencia al respecto de esa variable es no tener más miembros en casa que la pareja y los hijos si los hubiera.
+
+\begin{enumerate}
+\item Grupo 1 (27.9\%). El grupo más frecuente son familias, con baja formación ambos, con uno o dos hijos, donde al menos un miembro de la familia está en paro.
+\item Grupo 4 (25.0\%). Este grupo es de los más preocupantes, parejas con baja formación, con hijos donde más de la mitad de los miembros de la familia están en paro. Representa un cuarto de la muestra de parejas que viven juntas.
+\item Grupo 2 (17.2\%). Una de cada seis parejas, tienen formación de primer o segundo grado pero trabajan y no tienen cargas familiares en el hogar.
+\item Grupo 0 (16.1\%). En la misma proporción que el anterior, tenemos parejas con formación superior e hijos donde uno o ninguno de los miembros está en paro.
+\item Grupo 3 (13.8\%). En este caso tenemos, parejas sin hijos y baja formación uno o los dos están en paro.
+\end{enumerate}
+
+\section{Contenido adicional}
+
+He intenado utilizar un coeficiente para extraer subconjuntos interesantes de segmentaciones con mucho clusters, para echo tomo el valor de afinidad por cada objeto, calculo la media para el segmento y miró qué proporción de muestras pertenecen a un clúster con coeficiente de silueta mayor de $0.35$, posteriormente me quedo con la configuración que da el mayor valor de este índice y devuelvo los $n$ clusters primeros ordenados por $tam(C_i)\times SC_{medio}(C_i)$, esta ponderación está motivada para que no devulve segmentos muy pequeños con alta cohesión que pueden responder a casos anecdóticos o ruido. 
+
+El problema es como ya hemos comprobado, que en espacios demasiado segmentados devuelve una disección de los grupos más dominantes, que quedan igual de bien explicados en segmentaciones con menos clusters, mientras que en espacios poco segmentados, la utilidad desaparece porque se pueden apreciar a simple vista los clústers más significativos y con tendencias más sólidas. Es posible que en otro problemas de mayor tamaño donde hay una diversidad suficiente de casos como para aprovechar este tipo de estrategias mi intentona tuviera más exito, pero en este caso, donde las muestras son relativamente homogéneas con poca diversidad la utilidad de este cálculo ha sido poca.
+
+\section{Bibliografía}
+
+\begin{enumerate}
+\item Scikit-Learn. Clustering. \url{https://scikit-learn.org/stable/modules/clustering.html}
+\item SeaBorn. API Reference. \url{https://seaborn.pydata.org/api.html}
+\item Nikos Koufos, Brendan Martin. K-Means \& Other Clustering Algorithms: A Quick Intro with Python. \url{https://www.learndatasci.com/tutorials/k-means-clustering-algorithms-python-intro/}
+\item Jörn Hees. SciPy Hierarchical Clustering and Dendrogram Tutorial. \url{https://joernhees.de/blog/2015/08/26/scipy-hierarchical-clustering-and-dendrogram-tutorial/}
+\end{enumerate}
+\end{document}

@@ -1,0 +1,42 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8}]
+\PYG{n}{GPS\PYGZus{}KEYS} \PYG{o}{=} \PYG{p}{[}\PYG{l+s+s2}{\PYGZdq{}basin\PYGZdq{}}\PYG{p}{,} \PYG{l+s+s2}{\PYGZdq{}subvillage\PYGZdq{}}\PYG{p}{,} \PYG{l+s+s2}{\PYGZdq{}region\PYGZdq{}}\PYG{p}{,} \PYG{l+s+s2}{\PYGZdq{}region\PYGZus{}code\PYGZdq{}}\PYG{p}{,} \PYG{l+s+s2}{\PYGZdq{}district\PYGZus{}code\PYGZdq{}}\PYG{p}{,} \PYG{l+s+s2}{\PYGZdq{}lga\PYGZdq{}}\PYG{p}{,} \PYG{l+s+s2}{\PYGZdq{}ward\PYGZdq{}}\PYG{p}{]}
+
+\PYG{c+c1}{\PYGZsh{} En preprocess}
+\PYG{k}{def} \PYG{n+nf}{preprocess}\PYG{p}{(}\PYG{n}{data\PYGZus{}x}\PYG{p}{,} \PYG{n}{data\PYGZus{}y}\PYG{p}{,} \PYG{n}{data\PYGZus{}x\PYGZus{}tst}\PYG{p}{):}
+  \PYG{o}{...}
+  \PYG{c+c1}{\PYGZsh{} Imputamos train consigo mismo}
+  \PYG{n}{impZeroHeight}\PYG{p}{(}\PYG{n}{data\PYGZus{}x}\PYG{p}{,}\PYG{n}{data\PYGZus{}x}\PYG{p}{)}
+  \PYG{c+c1}{\PYGZsh{} Imputamos el test con el modelo del train}
+  \PYG{n}{impZeroHeight}\PYG{p}{(}\PYG{n}{data\PYGZus{}x}\PYG{p}{,}\PYG{n}{data\PYGZus{}x\PYGZus{}tst}\PYG{p}{)}
+  \PYG{o}{...}
+
+
+\PYG{k}{def} \PYG{n+nf}{impZeroHeight}\PYG{p}{(}\PYG{n}{src}\PYG{p}{,}\PYG{n}{dst}\PYG{p}{):}
+  \PYG{c+c1}{\PYGZsh{} Obtenemos X(long,lat) e y(height) origen}
+  \PYG{n}{coords\PYGZus{}tr} \PYG{o}{=} \PYG{n}{src}\PYG{p}{[[}\PYG{l+s+s1}{\PYGZsq{}longitude\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}latitude\PYGZsq{}}\PYG{p}{]]}
+  \PYG{n}{height\PYGZus{}tr} \PYG{o}{=} \PYG{n}{src}\PYG{p}{[[}\PYG{l+s+s1}{\PYGZsq{}gps\PYGZus{}height\PYGZsq{}}\PYG{p}{]]}
+\PYG{c+c1}{ Obtenemos X(long,lat) e y(height) destino}
+  \PYG{n}{coords\PYGZus{}tst} \PYG{o}{=} \PYG{n}{dst}\PYG{p}{[[}\PYG{l+s+s1}{\PYGZsq{}longitude\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}latitude\PYGZsq{}}\PYG{p}{]]}
+  \PYG{n}{height\PYGZus{}tst} \PYG{o}{=} \PYG{n}{dst}\PYG{p}{[[}\PYG{l+s+s1}{\PYGZsq{}gps\PYGZus{}height\PYGZsq{}}\PYG{p}{]]}
+
+  \PYG{c+c1}{\PYGZsh{} Máscara para el test}
+  \PYG{n}{tst\PYGZus{}msk} \PYG{o}{=} \PYG{p}{(}\PYG{n}{height\PYGZus{}tst} \PYG{o}{==} \PYG{l+m+mi}{0}\PYG{p}{)}\PYG{o}{.}\PYG{n}{values}\PYG{o}{.}\PYG{n}{reshape}\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{)}
+  \PYG{n}{coords\PYGZus{}tst} \PYG{o}{=} \PYG{n}{coords\PYGZus{}tst}\PYG{o}{.}\PYG{n}{values}\PYG{p}{[}\PYG{n}{tst\PYGZus{}msk}\PYG{p}{]}
+
+  \PYG{c+c1}{\PYGZsh{} Máscara para el train}
+  \PYG{n}{msk} \PYG{o}{=} \PYG{p}{(}\PYG{n}{height\PYGZus{}tr} \PYG{o}{!=} \PYG{l+m+mi}{0}\PYG{p}{)}\PYG{o}{.}\PYG{n}{values}\PYG{o}{.}\PYG{n}{reshape}\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{)}
+  \PYG{c+c1}{\PYGZsh{} X(long,lat) no nulo}
+  \PYG{n}{nonzero\PYGZus{}coords} \PYG{o}{=} \PYG{n}{coords\PYGZus{}tr}\PYG{o}{.}\PYG{n}{values}\PYG{p}{[}\PYG{n}{msk}\PYG{p}{]}
+  \PYG{c+c1}{\PYGZsh{} y(height) no nula}
+  \PYG{n}{nonzero\PYGZus{}height} \PYG{o}{=} \PYG{n}{height\PYGZus{}tr}\PYG{o}{.}\PYG{n}{values}\PYG{p}{[}\PYG{n}{msk}\PYG{p}{]}
+
+  \PYG{c+c1}{\PYGZsh{} Creamos el regresor y lo entrenamos}
+  \PYG{n}{rg} \PYG{o}{=} \PYG{n}{lgb}\PYG{o}{.}\PYG{n}{LGBMRegressor}\PYG{p}{(}\PYG{n}{n\PYGZus{}estimators}\PYG{o}{=}\PYG{l+m+mi}{500}\PYG{p}{)}
+  \PYG{n}{rg}\PYG{o}{.}\PYG{n}{fit}\PYG{p}{(}\PYG{n}{nonzero\PYGZus{}coords}\PYG{p}{,} \PYG{n}{nonzero\PYGZus{}height}\PYG{p}{)}
+
+  \PYG{c+c1}{\PYGZsh{}Predecimos el destino}
+  \PYG{n}{lbs} \PYG{o}{=} \PYG{n}{rg}\PYG{o}{.}\PYG{n}{predict}\PYG{p}{(}\PYG{n}{coords\PYGZus{}tst}\PYG{p}{)}
+
+  \PYG{c+c1}{\PYGZsh{} Sustituimos en el destino}
+  \PYG{n}{dst}\PYG{o}{.}\PYG{n}{iloc}\PYG{p}{[}\PYG{n}{tst\PYGZus{}msk}\PYG{p}{,} \PYG{n+nb}{list}\PYG{p}{(}\PYG{n+nb}{map}\PYG{p}{(}\PYG{k}{lambda} \PYG{n}{x}\PYG{p}{:} \PYG{n}{x} \PYG{o}{==} \PYG{l+s+s1}{\PYGZsq{}gps\PYGZus{}height\PYGZsq{}}\PYG{p}{,} \PYG{n}{dst}\PYG{o}{.}\PYG{n}{columns}\PYG{p}{))]} \PYG{o}{=} \PYG{n}{lbs}\PYG{o}{.}\PYG{n}{reshape}\PYG{p}{((}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{l+m+mi}{1}\PYG{p}{))}
+\end{Verbatim}

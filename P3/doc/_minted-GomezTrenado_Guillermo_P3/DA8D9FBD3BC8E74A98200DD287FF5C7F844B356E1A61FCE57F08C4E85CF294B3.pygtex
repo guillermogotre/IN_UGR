@@ -1,0 +1,20 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8}]
+\PYG{c+c1}{\PYGZsh{} Librería para la distancia esférica}
+\PYG{k+kn}{from} \PYG{n+nn}{geopy.distance} \PYG{k+kn}{import} \PYG{n}{geodesic}
+
+\PYG{k}{def} \PYG{n+nf}{addGeoDist}\PYG{p}{(}\PYG{n}{data}\PYG{p}{):}
+  \PYG{c+c1}{\PYGZsh{} Obtenemos tupla long, lat}
+  \PYG{n}{coords} \PYG{o}{=} \PYG{n+nb}{list}\PYG{p}{(}\PYG{n+nb}{zip}\PYG{p}{(}\PYG{n}{data}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}longitude\PYGZsq{}}\PYG{p}{],}\PYG{n}{data}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}latitude\PYGZsq{}}\PYG{p}{]))}
+
+  \PYG{c+c1}{\PYGZsh{} Eliminamos los valores nulos}
+  \PYG{n}{msk} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{(}\PYG{n}{coords}\PYG{p}{,}\PYG{n}{axis}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{))} \PYG{o}{\PYGZlt{}} \PYG{l+m+mf}{1e\PYGZhy{}5}
+
+  \PYG{c+c1}{\PYGZsh{} Booleano coordenada imputada}
+  \PYG{n}{data}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}reliable\PYGZus{}gps\PYGZsq{}}\PYG{p}{]} \PYG{o}{=} \PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}T\PYGZsq{}} \PYG{k}{if} \PYG{n}{m} \PYG{k}{else} \PYG{l+s+s1}{\PYGZsq{}F\PYGZsq{}} \PYG{k}{for} \PYG{n}{m} \PYG{o+ow}{in} \PYG{n}{msk}\PYG{p}{]}
+
+  \PYG{c+c1}{\PYGZsh{} Calculo distancia}
+  \PYG{n}{kms} \PYG{o}{=} \PYG{p}{[}\PYG{n}{geodesic}\PYG{p}{(}\PYG{n}{p1}\PYG{p}{,(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{))}\PYG{o}{.}\PYG{n}{km} \PYG{k}{for} \PYG{n}{p1} \PYG{o+ow}{in} \PYG{n}{coords}\PYG{p}{]}
+  \PYG{n}{data}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}dist\PYGZus{}ori\PYGZsq{}}\PYG{p}{]} \PYG{o}{=} \PYG{n}{kms}
+
+  \PYG{k}{return} \PYG{n}{msk}
+\end{Verbatim}
